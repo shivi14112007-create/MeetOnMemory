@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import HowItWorks from "../components/HowItWorks";
+import FAQ from "../components/FAQ";
 
 const Home = () => {
   return (
@@ -16,6 +17,8 @@ const Home = () => {
 
       {/* How It Works Section */}
       <HowItWorks />
+
+      <FAQ/>
     </div>
   );
 };
