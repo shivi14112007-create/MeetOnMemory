@@ -1,24 +1,25 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // ✅ <-- FIXED import
 import AppContent from "../context/AppContent";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
-
-
+import { Eye, EyeOff } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation();               // <-- new
-  const { backendUrl, setIsLoggedin, getUserData, setUserData } = useContext(AppContent);
+  const location = useLocation();
+  const { backendUrl, setIsLoggedin, getUserData, setUserData } =
+    useContext(AppContent);
 
-  // default to Login
   const [state, setState] = useState("Login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Set state based on ?mode=signup
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const mode = params.get("mode");
@@ -29,6 +30,7 @@ const Login = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     axios.defaults.withCredentials = true;
 
     try {
@@ -39,17 +41,21 @@ const Login = () => {
           password,
         });
 
-        if (!data.success) return toast.error(data.message || "Register failed");
+        if (!data.success)
+          return toast.error(data.message || "Register failed");
         toast.success("Account created successfully!");
       }
 
-      const { data: loginData } = await axios.post(`${backendUrl}/api/auth/login`, {
-        email,
-        password,
-      });
+      const { data: loginData } = await axios.post(
+        `${backendUrl}/api/auth/login`,
+        {
+          email,
+          password,
+        },
+      );
 
       if (loginData.success) {
-        const user = await getUserData(); // fetch from backend
+        const user = await getUserData();
 
         if (user) {
           setUserData(user);
@@ -65,99 +71,208 @@ const Login = () => {
     } catch (error) {
       const msg = error.response?.data?.message || "Network or server error.";
       toast.error(msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400 px-6 sm:px-0">
+    <div className="relative flex items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-400 overflow-hidden px-4 sm:px-6">
+      {/* Ambient background gradients */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-[128px] " />
+        <div
+          className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[128px] "
+          style={{ animationDelay: "2s" }}
+        />
+        <div className="absolute top-[40%] left-[50%] translate-x-[-50%] w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[96px]" />
+      </div>
+
+      {/* Logo */}
       <img
         onClick={() => navigate("/")}
         src={assets.logo}
-        alt=""
-        className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer"
+        alt="Logo"
+        className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer transition-all duration-300 hover:scale-105 hover:opacity-90 z-20"
       />
 
-      <div className="bg-slate-900 p-10 rounded-lg shadow-lg w-full sm:w-96 text-indigo-300 text-sm">
-        <h2 className="text-3xl font-semibold text-white text-center mb-3">
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </h2>
-        <p className="text-center text-sm mb-6">
-          {state === "Sign Up" ? "Create your account" : "Login to your account!"}
-        </p>
+      {/* Auth Card */}
+      <div className="relative w-full max-w-md bg-slate-900 backdrop-blur-2xl border border-slate-700/40 rounded-2xl shadow-2xl shadow-black/20 p-8 sm:p-10 z-10 transition-all duration-300">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">
+            {state === "Sign Up" ? "Create Account" : "Welcome Back"}
+          </h1>
+          <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            {state === "Sign Up"
+              ? "Join us today and get started in seconds"
+              : "Sign in to continue to your account"}
+          </p>
+        </div>
 
-        <form onSubmit={onSubmitHandler}>
+        <form onSubmit={onSubmitHandler} className="space-y-5">
+          {/* Name Field */}
           {state === "Sign Up" && (
-            <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
-              <img src={assets.person_icon} alt="" />
-              <input
-                onChange={(e) => setName(e.target.value)}
-                value={name}
-                className="bg-transparent outline-none"
-                type="text"
-                placeholder="Full Name"
-                required
-              />
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1"
+              >
+                Full Name
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <img
+                    src={assets.person_icon}
+                    alt=""
+                    className="w-5 h-5 text-slate-500 opacity-70"
+                  />
+                </div>
+                <input
+                  id="name"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                  type="text"
+                  autoComplete="name"
+                  placeholder="John Doe"
+                  required
+                  className="w-full pl-11 pr-4 py-3 bg-slate-800/40 border border-slate-600/40 rounded-xl text-slate-100 placeholder-slate-600 outline-none transition-all duration-200 focus:border-indigo-400/60 focus:bg-slate-800/60 focus-visible:ring-2 focus:ring-indigo-400/20 hover:border-slate-500/60"
+                />
+              </div>
             </div>
           )}
 
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
-            <img src={assets.mail_icon} alt="" />
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              className="bg-transparent outline-none"
-              type="email"
-              placeholder="Email id"
-              required
-            />
+          {/* Email Field */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1"
+            >
+              Email Address
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <img
+                  src={assets.mail_icon}
+                  alt=""
+                  className="w-5 h-5 text-slate-500 opacity-70"
+                />
+              </div>
+              <input
+                id="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                required
+                className="w-full pl-11 pr-4 py-3 bg-slate-800/40 border border-slate-600/40 rounded-xl text-slate-100 placeholder-slate-600 outline-none transition-all duration-200 focus:border-indigo-400/60 focus:bg-slate-800/60 focus-visible:ring-2 focus:ring-indigo-400/20 hover:border-slate-500/60"
+              />
+            </div>
           </div>
 
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
-            <img src={assets.lock_icon} alt="" />
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              className="bg-transparent outline-none"
-              type="password"
-              placeholder="Password"
-              required
-            />
+          {/* Password Field */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 ml-1"
+            >
+              Password
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <img
+                  src={assets.lock_icon}
+                  alt=""
+                  className="w-5 h-5 text-slate-500 opacity-70"
+                />
+              </div>
+              <input
+                id="password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                autoComplete="current-password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                required
+                className="w-full pl-11 pr-12 py-3 bg-slate-800/40 border border-slate-600/40 rounded-xl text-slate-100 placeholder-slate-600 outline-none transition-all duration-200 focus:border-indigo-400/60 focus:bg-slate-800/60 focus-visible:ring-2 focus:ring-indigo-400/20 hover:border-slate-500/60"
+              />
+              <button
+                type="button"
+                autocomple
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3.5 flex cursor-pointer items-center text-slate-500 hover:text-indigo-400 transition-colors duration-200 outline-none focus:text-indigo-400"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
 
-          <p
-            onClick={() => navigate("/reset-password")}
-            className="mb-4 text-indigo-500 cursor-pointer"
+          {/* Forgot Password */}
+          <div className="flex items-center justify-end pt-1">
+            <button
+              type="button"
+              onClick={() => navigate("/reset-password")}
+              className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors duration-200 cursor-pointer outline-none focus:underline underline-offset-2"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 px-4 rounded-xl cursor-pointer bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:translate-y-[-2px] active:translate-y-0 active:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
           >
-            Forgot password?
-          </p>
-          <button className="w-full py-2.5 rounded-full bg-linear-to-r from-indigo-500 to-indigo-900 text-white font-medium">
-            {state}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>
+                  {state === "Sign Up"
+                    ? "Creating account..."
+                    : "Signing in..."}
+                </span>
+              </>
+            ) : (
+              state
+            )}
           </button>
         </form>
 
-        <p className="text-gray-400 text-center text-xs mt-4">
-          {state === "Sign Up" ? (
-            <>
-              Already have an account?{" "}
-              <span
-                onClick={() => setState("Login")}
-                className="text-blue-400 cursor-pointer underline"
-              >
-                Login here
-              </span>
-            </>
-          ) : (
-            <>
-              Don’t have an account?{" "}
-              <span
-                onClick={() => setState("Sign Up")}
-                className="text-blue-400 cursor-pointer underline"
-              >
-                Sign Up
-              </span>
-            </>
-          )}
-        </p>
+        {/* Toggle State */}
+        <div className="mt-8 pt-6 border-t border-slate-700/40 text-center ">
+          <p className="text-slate-400 text-sm">
+            {state === "Sign Up" ? (
+              <>
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setState("Login")}
+                  className="text-indigo-400 cursor-pointer font-semibold hover:text-indigo-300 transition-colors duration-200 outline-none focus:underline underline-offset-2"
+                >
+                  Sign in
+                </button>
+              </>
+            ) : (
+              <>
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setState("Sign Up")}
+                  className="text-indigo-400 font-semibold cursor-pointer hover:text-indigo-300 transition-colors duration-200 outline-none focus:underline underline-offset-2"
+                >
+                  Sign up
+                </button>
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );
