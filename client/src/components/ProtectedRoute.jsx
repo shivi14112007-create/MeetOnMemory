@@ -21,7 +21,11 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // Onboarding logic
-  const onboardingPages = ["/select-role", "/create-organization", "/join-organization"];
+  const onboardingPages = [
+    "/select-role",
+    "/create-organization",
+    "/join-organization",
+  ];
   const isOnboardingPage = onboardingPages.includes(location.pathname);
 
   if (userData && !userData.hasCompletedOnboarding && !isOnboardingPage) {
@@ -29,7 +33,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (userData && userData.hasCompletedOnboarding && isOnboardingPage) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
