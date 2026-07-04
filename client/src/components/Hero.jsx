@@ -1,20 +1,26 @@
-import React from 'react';
-import { FaArrowRight, FaPlay, FaRobot, FaSearch, FaFileAlt, FaBuilding } from 'react-icons/fa';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FaArrowRight,
+  FaPlay,
+  FaRobot,
+  FaSearch,
+  FaFileAlt,
+  FaBuilding,
+} from "react-icons/fa";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   // Handle CTA button clicks
   const handleGetStarted = () => {
     // Navigate to signup or dashboard
-    window.location.href = '/signup';
-    // Or if using React Router:
-    // navigate('/signup');
+    navigate("/login?mode=signup");
   };
 
   const handleLearnMore = () => {
     // Scroll to features section or navigate to about
-    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-    // Or if using React Router:
-    // navigate('/about');
+    document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -44,23 +50,23 @@ const Hero = () => {
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Never Lose{' '}
+              Never Lose{" "}
               <span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Meeting Knowledge
-              </span>{' '}
+              </span>{" "}
               Again
             </h1>
 
             {/* Description */}
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
-              MeetOnMemory is an AI-powered platform that transforms meeting recordings and transcripts 
-              into searchable, structured knowledge. Preserve institutional memory and make every 
-              conversation count.
+              MeetOnMemory is an AI-powered platform that transforms meeting
+              recordings and transcripts into searchable, structured knowledge.
+              Preserve institutional memory and make every conversation count.
             </p>
 
             {/* CTA Buttons - Now with functionality */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button 
+              <button
                 onClick={handleGetStarted}
                 className="group px-8 py-4 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
                 aria-label="Get Started with MeetOnMemory"
@@ -68,7 +74,7 @@ const Hero = () => {
                 Get Started
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
-              <button 
+              <button
                 onClick={handleLearnMore}
                 className="px-8 py-4 bg-white text-gray-700 rounded-xl font-semibold border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
                 aria-label="Learn more about MeetOnMemory"
@@ -81,15 +87,23 @@ const Hero = () => {
             {/* Statistics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-8 border-t border-gray-200">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">⚡ AI-Powered</div>
-                <div className="text-sm text-gray-500">Intelligent Processing</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  ⚡ AI-Powered
+                </div>
+                <div className="text-sm text-gray-500">
+                  Intelligent Processing
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">🔍 Instant Search</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  🔍 Instant Search
+                </div>
                 <div className="text-sm text-gray-500">Semantic Retrieval</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">📝 Auto-Summaries</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  📝 Auto-Summaries
+                </div>
                 <div className="text-sm text-gray-500">Meeting Minutes</div>
               </div>
               <div className="text-center">
@@ -100,7 +114,10 @@ const Hero = () => {
           </div>
 
           {/* Right - Illustration/Visual */}
-          <div className="relative flex justify-center items-center" aria-hidden="true">
+          <div
+            className="relative flex justify-center items-center"
+            aria-hidden="true"
+          >
             <div className="relative w-full max-w-md">
               {/* Dashboard Mockup */}
               <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
@@ -112,14 +129,18 @@ const Hero = () => {
                   <div className="flex-1"></div>
                   <div className="text-xs text-gray-400">MeetOnMemory</div>
                 </div>
-                
+
                 {/* Mockup content */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 bg-blue-50 p-3 rounded-lg">
                     <FaRobot className="text-blue-600 text-xl" />
                     <div>
-                      <div className="font-semibold text-sm">AI Meeting Summary</div>
-                      <div className="text-xs text-gray-500">Q4 Planning Meeting</div>
+                      <div className="font-semibold text-sm">
+                        AI Meeting Summary
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Q4 Planning Meeting
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 bg-purple-50 p-3 rounded-lg">
@@ -132,15 +153,23 @@ const Hero = () => {
                   <div className="flex items-center gap-3 bg-green-50 p-3 rounded-lg">
                     <FaFileAlt className="text-green-600 text-xl" />
                     <div>
-                      <div className="font-semibold text-sm">Policy Document</div>
-                      <div className="text-xs text-gray-500">v2.3 • Updated today</div>
+                      <div className="font-semibold text-sm">
+                        Policy Document
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        v2.3 • Updated today
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg">
                     <FaBuilding className="text-orange-600 text-xl" />
                     <div>
-                      <div className="font-semibold text-sm">Institutional Memory</div>
-                      <div className="text-xs text-gray-500">1,847 records stored</div>
+                      <div className="font-semibold text-sm">
+                        Institutional Memory
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        1,847 records stored
+                      </div>
                     </div>
                   </div>
                 </div>

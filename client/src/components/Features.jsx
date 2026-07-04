@@ -1,62 +1,77 @@
-import React from 'react';
-import { FaMicrophone, FaChartBar, FaFolderOpen, FaDatabase, FaRobot, FaSearch } from 'react-icons/fa';
+import React from "react";
+import {
+  FaMicrophone,
+  FaChartBar,
+  FaFolderOpen,
+  FaDatabase,
+  FaRobot,
+  FaSearch,
+} from "react-icons/fa";
 
 const featuresData = [
   {
     id: 1,
     icon: <FaRobot />,
     title: "AI Meeting Summaries",
-    description: "Automatically generate intelligent meeting summaries and Minutes of Meeting (MoM) using advanced AI.",
-    gradient: "from-indigo-500 to-purple-500"
+    description:
+      "Automatically generate intelligent meeting summaries and Minutes of Meeting (MoM) using advanced AI.",
+    gradient: "from-indigo-500 to-purple-500",
   },
   {
     id: 2,
     icon: <FaSearch />,
     title: "Smart Search",
-    description: "Perform semantic search across all meeting records and documents using vector embeddings and AI.",
-    gradient: "from-pink-500 to-rose-400"
+    description:
+      "Perform semantic search across all meeting records and documents using vector embeddings and AI.",
+    gradient: "from-pink-500 to-rose-400",
   },
   {
     id: 3,
     icon: <FaMicrophone />,
     title: "Meeting Recording & Upload",
-    description: "Upload meeting recordings or transcripts for AI-powered processing and storage.",
-    gradient: "from-blue-500 to-cyan-400"
+    description:
+      "Upload meeting recordings or transcripts for AI-powered processing and storage.",
+    gradient: "from-blue-500 to-cyan-400",
   },
   {
     id: 4,
     icon: <FaChartBar />,
     title: "Reports & Analytics",
-    description: "Generate insightful reports and visualize meeting activity and organizational trends.",
-    gradient: "from-purple-500 to-pink-400"
+    description:
+      "Generate insightful reports and visualize meeting activity and organizational trends.",
+    gradient: "from-purple-500 to-pink-400",
   },
   {
     id: 5,
     icon: <FaFolderOpen />,
     title: "Policy Management",
-    description: "Store, organize, version, and search organizational policies in one centralized location.",
-    gradient: "from-green-500 to-emerald-400"
+    description:
+      "Store, organize, version, and search organizational policies in one centralized location.",
+    gradient: "from-green-500 to-emerald-400",
   },
   {
     id: 6,
     icon: <FaDatabase />,
     title: "Institutional Memory",
-    description: "Preserve valuable organizational knowledge so information remains accessible even when team members change.",
-    gradient: "from-orange-500 to-amber-400"
-  }
+    description:
+      "Preserve valuable organizational knowledge so information remains accessible even when team members change.",
+    gradient: "from-orange-500 to-amber-400",
+  },
 ];
 
 const FeatureCard = ({ icon, title, description, gradient }) => {
   return (
     <div className="group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-blue-200 relative overflow-hidden">
       {/* Icon with gradient background - UPDATED to bg-linear-to-br for Tailwind v4 */}
-      <div className={`w-14 h-14 rounded-xl bg-linear-to-br ${gradient} flex items-center justify-center text-white text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
+      <div
+        className={`w-14 h-14 rounded-xl bg-linear-to-br ${gradient} flex items-center justify-center text-white text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}
+      >
         {icon}
       </div>
-      
+
       <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
       <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-      
+
       {/* Subtle glow effect on hover - UPDATED to bg-linear-to-r for Tailwind v4 */}
       <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-linear-to-r from-blue-500/5 to-purple-500/5" />
     </div>
@@ -65,7 +80,7 @@ const FeatureCard = ({ icon, title, description, gradient }) => {
 
 const Features = () => {
   return (
-    <section className="pt-36 pb-12 px-4 bg-gray-50">
+    <section id="features" className="pt-36 pb-12 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Section Heading */}
         <div className="text-center mb-16">
@@ -77,7 +92,8 @@ const Features = () => {
             </span>
           </h2>
           <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-sm md:text-base">
-            Everything you need to capture, organize, and retrieve institutional knowledge.
+            Everything you need to capture, organize, and retrieve institutional
+            knowledge.
           </p>
         </div>
 
