@@ -259,7 +259,7 @@ const HowItWorks = () => {
   return (
     <section
       id="how-it-works"
-      className="pt-18 pb-8 bg-gradient-to-b from-slate-50 to-white overflow-hidden"
+      className="py-24 bg-linear-to-b from-slate-50 to-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
         {/* Section Header */}
@@ -267,9 +267,9 @@ const HowItWorks = () => {
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wider text-blue-700 bg-blue-50 border border-blue-200/50 uppercase">
             <Sparkles className="w-3.5 h-3.5" /> Core Workflow
           </span>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mt-4 mb-6 leading-none">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mt-4 mb-6 leading-tight">
             How{" "}
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
               MeetOnMemory
             </span>{" "}
             Works

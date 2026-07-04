@@ -4,7 +4,7 @@ import Hero from "../components/Hero";
 import HowItWorks from "../components/HowItWorks";
 import About from "../components/About";
 import FAQ from "../components/FAQ";
-import Features from '../components/Features';
+import Features from "../components/Features";
 
 const Home = () => {
   return (
@@ -12,18 +12,14 @@ const Home = () => {
       {/* Fixed Navbar */}
       <Navbar />
 
-      {/* Main content (Hero) */}
-      <div className="flex flex-col items-center justify-center min-h-screen pt-32 pb-20 text-center">
-          <Hero />
-      </div>
+      {/* Hero — handles its own min-height and padding */}
+      <Hero />
 
+      {/* Landing Page Sections */}
       <Features />
-
-      {/* How It Works Section */}
       <HowItWorks />
       <About />
-
-      <FAQ/>
+      <FAQ />
     </div>
   );
 };

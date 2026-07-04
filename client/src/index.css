@@ -1,10 +1,70 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
-* {
-     font-family: "Outfit", sans-serif;
+
+/* ============================================================
+   GLOBAL RESET & BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* Blob animation for Hero section */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  font-family: "Outfit", sans-serif;
+}
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  /* Colors */
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-secondary: #7c3aed;
+  --color-accent: #0ea5e9;
+
+  /* Spacing scale */
+  --section-py: 6rem; /* 96px */
+  --container-px: 1.5rem;
+
+  /* Border radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.07),
+    0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-card-hover: 0 20px 40px -8px rgb(37 99 235 / 0.15),
+    0 8px 16px -4px rgb(0 0 0 / 0.08);
+  --shadow-glow-blue: 0 0 30px rgb(37 99 235 / 0.2);
+}
+
+/* ============================================================
+   ACCESSIBILITY — FOCUS VISIBLE
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Remove default outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================================
+   BLOB ANIMATION (Hero)
+   ============================================================ */
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -32,3 +92,118 @@
   animation-delay: 4s;
 }
 
+/* ============================================================
+   FLOAT ANIMATION (Hero mockup card)
+   ============================================================ */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ============================================================
+   FADE-IN-UP ENTRANCE ANIMATION
+   ============================================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.fade-in-up.visible {
+  opacity: 1;
+}
+
+/* Stagger delays for child items */
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+.stagger-2 {
+  animation-delay: 0.15s;
+}
+.stagger-3 {
+  animation-delay: 0.25s;
+}
+.stagger-4 {
+  animation-delay: 0.35s;
+}
+.stagger-5 {
+  animation-delay: 0.45s;
+}
+.stagger-6 {
+  animation-delay: 0.55s;
+}
+
+/* ============================================================
+   REDUCED MOTION — Respect user preference
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================================
+   GRADIENT TEXT UTILITY
+   ============================================================ */
+.gradient-text {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   SECTION SEPARATOR — Subtle wave transitions
+   ============================================================ */
+.section-divider {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

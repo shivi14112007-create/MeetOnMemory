@@ -1,43 +1,104 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback } from "react";
+import { Link } from "react-router-dom";
+import { Github, ArrowUp } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const handleNavLink = (href) => {
+    if (href.startsWith("#")) {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <footer className="bg-white border-t border-gray-200 pt-16 pb-8 mt-auto">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+
           {/* Column 1: Project Info */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <img src="/favicon.svg" alt="logo" className="w-8 h-8" />
-              <span className="font-semibold text-xl text-gray-800">MeetOnMemory</span>
+          <div className="flex flex-col gap-4 lg:col-span-1">
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/favicon.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-8 h-8"
+              />
+              <span className="font-bold text-xl text-gray-800 tracking-tight">
+                MeetOnMemory
+              </span>
             </div>
-            <p className="text-gray-600 font-medium">
-              AI-Powered Meeting Memory & Management Platform
+            <p className="text-gray-600 text-sm font-medium leading-snug">
+              AI-Powered Meeting Memory &amp; Management Platform
             </p>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Transform meetings, discussions, and organizational knowledge into a searchable and structured repository using AI.
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Transform meetings, discussions, and organizational knowledge into
+              a searchable and structured repository using AI.
             </p>
+            {/* GitHub social link */}
+            <a
+              href="https://github.com/imuniqueshiv/MeetOnMemory"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="MeetOnMemory GitHub repository"
+              className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors duration-200 mt-1 group w-fit"
+            >
+              <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              View on GitHub
+            </a>
           </div>
 
           {/* Column 2: Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Quick Links</h3>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-5">
+              Quick Links
+            </h3>
             <ul className="flex flex-col gap-3">
               <li>
                 <Link
                   to="/"
-                  className="text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:drop-shadow-sm inline-block"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
                 >
                   Home
                 </Link>
               </li>
               <li>
+                <button
+                  onClick={() => handleNavLink("#features")}
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block text-left"
+                  aria-label="Scroll to Features section"
+                >
+                  Features
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNavLink("#how-it-works")}
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block text-left"
+                  aria-label="Scroll to How It Works section"
+                >
+                  How It Works
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNavLink("#about")}
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block text-left"
+                  aria-label="Scroll to About section"
+                >
+                  About
+                </button>
+              </li>
+              <li>
                 <Link
                   to="/dashboard"
-                  className="text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:drop-shadow-sm inline-block"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
                 >
                   Dashboard
                 </Link>
@@ -45,7 +106,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/login"
-                  className="text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:drop-shadow-sm inline-block"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
                 >
                   Login
                 </Link>
@@ -55,24 +116,28 @@ const Footer = () => {
 
           {/* Column 3: Resources */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Resources</h3>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-5">
+              Resources
+            </h3>
             <ul className="flex flex-col gap-3">
               <li>
                 <a
                   href="https://github.com/imuniqueshiv/MeetOnMemory"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:drop-shadow-sm inline-block"
+                  aria-label="MeetOnMemory GitHub repository (opens in new tab)"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
                 >
                   GitHub Repository
                 </a>
               </li>
               <li>
                 <a
-                  href="https://github.com/imuniqueshiv"
+                  href="https://github.com/imuniqueshiv/MeetOnMemory/issues"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:drop-shadow-sm inline-block"
+                  aria-label="Report issues on GitHub (opens in new tab)"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
                 >
                   Report Issues
                 </a>
@@ -82,9 +147,21 @@ const Footer = () => {
                   href="https://github.com/imuniqueshiv/MeetOnMemory/blob/main/CONTRIBUTING.md"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 hover:drop-shadow-sm inline-block"
+                  aria-label="Contributing guide (opens in new tab)"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
                 >
                   Contributing
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/imuniqueshiv/MeetOnMemory/blob/main/CODE_OF_CONDUCT.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Code of Conduct (opens in new tab)"
+                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors duration-200 inline-block"
+                >
+                  Code of Conduct
                 </a>
               </li>
             </ul>
@@ -92,40 +169,47 @@ const Footer = () => {
 
           {/* Column 4: Built with */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Built with</h3>
-            <ul className="flex flex-col gap-3 text-gray-600">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                React
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                Node.js
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                Express
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                MongoDB
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                Google Gemini
-              </li>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-5">
+              Built with
+            </h3>
+            <ul className="flex flex-col gap-2.5">
+              {[
+                "React",
+                "Node.js",
+                "Express",
+                "MongoDB",
+                "Google Gemini",
+                "Pinecone",
+              ].map((tech) => (
+                <li key={tech} className="flex items-center gap-2 text-sm text-gray-500">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-linear-to-br from-blue-600 to-violet-600 flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  {tech}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-          <p className="text-gray-500 text-sm">
-            &copy; {currentYear} MeetOnMemory.
+        {/* Bottom bar */}
+        <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-gray-400 text-sm">
+            &copy; {currentYear} MeetOnMemory. All rights reserved.
           </p>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-400 text-sm">
             Built with ❤️ by the MeetOnMemory Community.
           </p>
+          {/* Back to top */}
+          <button
+            onClick={scrollToTop}
+            aria-label="Scroll back to top"
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-blue-600 transition-colors duration-200 group focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1"
+          >
+            <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
+            Back to top
+          </button>
         </div>
       </div>
     </footer>
