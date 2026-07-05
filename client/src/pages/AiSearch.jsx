@@ -15,7 +15,7 @@ const ResultModal = ({ result, onClose }) => {
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 text-2xl"
           >
-            ✕
+            
           </button>
         </div>
 
@@ -61,8 +61,8 @@ const ResultModal = ({ result, onClose }) => {
             <div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase">Tags</h3>
               <div className="flex flex-wrap gap-2 mt-1">
-                {result.tags.map((tag, i) => (
-                  <span key={i} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
+                {result.tags.map((tag) => (
+                  <span key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
                     #{tag}
                   </span>
                 ))}
@@ -109,11 +109,11 @@ const AiSearch = () => {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || `Server error: ${res.status}`);
+        throw new Error(errorData.error || `Server error: ${res.status}`);
       }
 
       const data = await res.json();
-      console.log("🔍 Search results from backend:", data);
+      // console.log("🔍 Search results from backend:", data);
 
       setResults(data.results || []);
       if (data.results?.length === 0) {
