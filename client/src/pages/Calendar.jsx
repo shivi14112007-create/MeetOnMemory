@@ -375,6 +375,23 @@ const Calendar = () => {
               <span>Filters:</span>
             </div>
 
+            {/* Date filter (Jump to Date) */}
+            <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-slate-700 select-none">
+              <span className="text-[10px] text-slate-400 uppercase font-bold mr-1">
+                Date:
+              </span>
+              <input
+                type="date"
+                value={`${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setCurrentDate(new Date(e.target.value + "T00:00:00"));
+                  }
+                }}
+                className="bg-transparent border-none text-slate-700 outline-none cursor-pointer text-xs font-semibold"
+              />
+            </div>
+
             {/* Status filter */}
             <select
               value={statusFilter}
