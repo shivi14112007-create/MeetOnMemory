@@ -8,6 +8,7 @@ import {
   X,
   LayoutDashboard,
   Calendar,
+  CalendarDays,
   Building2,
   Search,
   Bell,
@@ -204,6 +205,7 @@ const Navbar = () => {
   const appLinks = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Meetings", href: "/meetings", icon: Calendar },
+    { label: "Calendar", href: "/calendar", icon: CalendarDays },
     { label: "Team Members", href: "/team-members", icon: Users },
     { label: "Organizations", href: "/select-role", icon: Building2 },
     { label: "AI Search", href: "/ai-search", icon: Search },
