@@ -2,7 +2,7 @@ import axios from "axios";
 import React, {useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AppContent from "./AppContent.js";
-
+import { useNavigate } from 'react-router-dom';
 
 axios.defaults.withCredentials = true;
 
@@ -14,6 +14,7 @@ const [isLoggedin, setIsLoggedin] = useState(false);
 const [userData, setUserData] = useState(null);
 const [loading, setLoading] = useState(true);
 const [isLoggingOut, setIsLoggingOut] = useState(false);
+const navigate = useNavigate();
 
 const getUserData = useCallback(async () => {
 try {
@@ -85,6 +86,9 @@ const logoutUser = async () => {
 try {
 setIsLoggingOut(true);
 
+  toast.success("Logged out successfully");
+
+  navigate('/'); //FORCE REDIRECT TO LANDING PAGE (Prevents the 404 page)
 
   await axios.post(
     `${backendUrl}/api/auth/logout`,
@@ -98,7 +102,6 @@ setIsLoggingOut(true);
   setUserData(null);
   localStorage.removeItem("userData");
 
-  toast.success("Logged out successfully");
 } catch {
   toast.error("Failed to logout");
 } finally {
