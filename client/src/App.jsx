@@ -27,6 +27,7 @@ import MeetingDetails from "./pages/MeetingDetails.jsx";
 import TeamMembers from "./pages/TeamMembers.jsx";
 import Profile from "./pages/Profile.jsx";
 import Calendar from "./pages/Calendar.jsx";
+import Notifications from "./pages/Notifications.jsx";
 
 // --- Components ---
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -246,6 +247,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Calendar />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
             </ProtectedRoute>
           }
         />

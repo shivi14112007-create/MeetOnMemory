@@ -31,7 +31,8 @@ const NAV_LINKS = [
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { backendUrl, userData, setUserData, setIsLoggedin } = useContext(AppContent);
+  const { backendUrl, userData, setUserData, setIsLoggedin } =
+    useContext(AppContent);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -356,14 +357,15 @@ const Navbar = () => {
                         <span className="font-bold text-gray-800 text-sm">
                           Notifications
                         </span>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={markAllAsRead}
-                            className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
-                          >
-                            Mark all as read
-                          </button>
-                        )}
+                        <button
+                          onClick={() => {
+                            setNotificationsOpen(false);
+                            navigate("/notifications");
+                          }}
+                          className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                        >
+                          View All
+                        </button>
                       </div>
                       <div className="max-h-64 overflow-y-auto divide-y divide-gray-50">
                         {notifications.length > 0 ? (
@@ -621,7 +623,10 @@ const Navbar = () => {
 
               {/* Mobile Notifications Section Toggle */}
               <button
-                onClick={() => setMobileNotifOpen(!mobileNotifOpen)}
+                onClick={() => {
+                  setMobileOpen(false);
+                  navigate("/notifications");
+                }}
                 className={`w-full flex items-center justify-between px-4 py-3 text-sm font-semibold rounded-xl transition-all cursor-pointer ${
                   mobileNotifOpen
                     ? "bg-blue-50/50 text-blue-600"
@@ -640,38 +645,6 @@ const Navbar = () => {
                   </span>
                 )}
               </button>
-
-              {/* Mobile Notifications Expandable List */}
-              {mobileNotifOpen && (
-                <div className="mx-2 bg-gray-50/60 rounded-xl divide-y divide-gray-100 border border-gray-100 overflow-hidden mb-2">
-                  {notifications.map((notif) => (
-                    <div key={notif.id} className="p-3 text-left">
-                      <div className="flex justify-between items-start gap-2 mb-0.5">
-                        <p className="font-bold text-xs text-gray-800 flex items-center gap-1.5">
-                          {notif.unread && (
-                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                          )}
-                          {notif.title}
-                        </p>
-                        <span className="text-[9px] text-gray-400 font-semibold">
-                          {notif.time}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-gray-500 leading-snug">
-                        {notif.description}
-                      </p>
-                    </div>
-                  ))}
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={markAllAsRead}
-                      className="w-full text-center py-2 text-xs font-bold text-blue-600 hover:text-blue-800 bg-white border-t border-gray-100 cursor-pointer"
-                    >
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-              )}
 
               <button
                 onClick={() => {

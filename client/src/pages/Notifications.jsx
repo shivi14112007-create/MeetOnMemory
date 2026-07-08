@@ -1,0 +1,382 @@
+import React, { useContext, useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import AppContent from "../context/AppContent";
+import { toast } from "react-toastify";
+import Navbar from "../components/Navbar.jsx";
+import {
+  Bell,
+  Check,
+  CheckCheck,
+  Trash2,
+  Filter,
+  Calendar,
+  FileText,
+  Brain,
+  Building2,
+  Shield,
+  BarChart3,
+  AlertCircle,
+  X,
+  ArrowRight,
+} from "lucide-react";
+
+const CATEGORY_ICONS = {
+  meetings: Calendar,
+  ai_processing: Brain,
+  organizations: Building2,
+  policies: Shield,
+  reports: BarChart3,
+  system: AlertCircle,
+};
+
+const CATEGORY_COLORS = {
+  meetings: "bg-blue-50 text-blue-600 border-blue-200",
+  ai_processing: "bg-violet-50 text-violet-600 border-violet-200",
+  organizations: "bg-emerald-50 text-emerald-600 border-emerald-200",
+  policies: "bg-amber-50 text-amber-600 border-amber-200",
+  reports: "bg-indigo-50 text-indigo-600 border-indigo-200",
+  system: "bg-slate-50 text-slate-600 border-slate-200",
+};
+
+const CATEGORY_LABELS = {
+  meetings: "Meetings",
+  ai_processing: "AI Processing",
+  organizations: "Organizations",
+  policies: "Policies",
+  reports: "Reports",
+  system: "System",
+};
+
+const formatTimeAgo = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+
+  if (seconds < 60) return "Just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  return date.toLocaleDateString();
+};
+
+const Notifications = () => {
+  const { backendUrl, userData } = useContext(AppContent);
+  const navigate = useNavigate();
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filter, setFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
+  const fetchNotifications = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const params = {};
+      if (filter !== "all") params.status = filter;
+      if (categoryFilter !== "all") params.category = categoryFilter;
+
+      const { data } = await axios.get(`${backendUrl}/api/notifications`, {
+        params,
+        withCredentials: true,
+      });
+
+      if (data.success) {
+        setNotifications(data.notifications);
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+      setError("Failed to load notifications");
+      toast.error("Failed to load notifications");
+    } finally {
+      setLoading(false);
+    }
+  }, [backendUrl, filter, categoryFilter]);
+
+  useEffect(() => {
+    if (userData) {
+      fetchNotifications();
+    }
+  }, [userData, fetchNotifications]);
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      const { data } = await axios.patch(
+        `${backendUrl}/api/notifications/${id}/read`,
+        {},
+        { withCredentials: true },
+      );
+
+      if (data.success) {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+        toast.success("Marked as read");
+      }
+    } catch (err) {
+      console.error("Error marking as read:", err);
+      toast.error("Failed to mark as read");
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const { data } = await axios.patch(
+        `${backendUrl}/api/notifications/mark-all-read`,
+        {},
+        { withCredentials: true },
+      );
+
+      if (data.success) {
+        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+        setUnreadCount(0);
+        toast.success("All notifications marked as read");
+      }
+    } catch (err) {
+      console.error("Error marking all as read:", err);
+      toast.error("Failed to mark all as read");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const { data } = await axios.delete(
+        `${backendUrl}/api/notifications/${id}`,
+        { withCredentials: true },
+      );
+
+      if (data.success) {
+        setNotifications((prev) => {
+          const deleted = prev.find((n) => n.id === id);
+          const newCount =
+            deleted && !deleted.isRead ? unreadCount - 1 : unreadCount;
+          setUnreadCount(Math.max(0, newCount));
+          return prev.filter((n) => n.id !== id);
+        });
+        toast.success("Notification deleted");
+      }
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+      toast.error("Failed to delete notification");
+    }
+  };
+
+  const handleActionClick = (notification) => {
+    if (notification.actionUrl) {
+      if (!notification.isRead) {
+        handleMarkAsRead(notification.id);
+      }
+      navigate(notification.actionUrl);
+    }
+  };
+
+  const filteredNotifications = notifications;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-linear-to-b from-slate-50 via-white to-slate-50">
+      <Navbar />
+
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 sm:pb-20">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+                Notifications
+              </h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Stay updated with your activity and alerts
+              </p>
+            </div>
+            {unreadCount > 0 && (
+              <button
+                onClick={handleMarkAllAsRead}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-semibold hover:bg-blue-100 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                <CheckCheck className="w-4 h-4" />
+                Mark all as read
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-3">
+          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-1">
+            <Filter className="w-4 h-4 text-slate-400 ml-2" />
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                filter === "all"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setFilter("unread")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                filter === "unread"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              Unread
+            </button>
+            <button
+              onClick={() => setFilter("read")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                filter === "read"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              Read
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-1 overflow-x-auto">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-transparent text-slate-900 border-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            >
+              <option value="all">All Categories</option>
+              <option value="meetings">Meetings</option>
+              <option value="ai_processing">AI Processing</option>
+              <option value="organizations">Organizations</option>
+              <option value="policies">Policies</option>
+              <option value="reports">Reports</option>
+              <option value="system">System</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Notifications List */}
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+            <p className="text-slate-600">{error}</p>
+            <button
+              onClick={fetchNotifications}
+              className="mt-4 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : filteredNotifications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+              <Bell className="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              No notifications
+            </h3>
+            <p className="text-slate-500 max-w-sm">
+              {filter === "unread" || categoryFilter !== "all"
+                ? "No notifications match your current filters."
+                : "You're all caught up! We'll notify you when something new happens."}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredNotifications.map((notification) => {
+              const Icon = CATEGORY_ICONS[notification.category] || AlertCircle;
+              const categoryColor =
+                CATEGORY_COLORS[notification.category] ||
+                CATEGORY_COLORS.system;
+
+              return (
+                <div
+                  key={notification.id}
+                  className={`relative group rounded-xl border bg-white p-4 sm:p-5 transition-all duration-200 ${
+                    !notification.isRead
+                      ? "border-blue-200 bg-blue-50/30 shadow-sm"
+                      : "border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Icon */}
+                    <div
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${categoryColor}`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {!notification.isRead && (
+                            <span className="inline-block w-2 h-2 rounded-full bg-blue-600"></span>
+                          )}
+                          <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
+                            {notification.title}
+                          </h3>
+                          <span
+                            className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${categoryColor}`}
+                          >
+                            {CATEGORY_LABELS[notification.category] || "System"}
+                          </span>
+                        </div>
+                        <span className="text-xs text-slate-400 whitespace-nowrap">
+                          {formatTimeAgo(notification.createdAt)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                        {notification.description}
+                      </p>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {notification.actionUrl && (
+                          <button
+                            onClick={() => handleActionClick(notification)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                          >
+                            {notification.actionLabel || "View"}
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        )}
+
+                        {!notification.isRead && (
+                          <button
+                            onClick={() => handleMarkAsRead(notification.id)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition-colors focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2"
+                          >
+                            <Check className="w-3 h-3" />
+                            Mark as read
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => handleDelete(notification.id)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 transition-colors focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default Notifications;
