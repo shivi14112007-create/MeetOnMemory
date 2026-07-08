@@ -32,7 +32,19 @@ export const getNotifications = async (req, res) => {
     const { category, status } = req.query;
     const filter = { user: req.user.id };
 
-    if (category && category !== "all") {
+    const allowedCategories = [
+      "meetings",
+      "ai_processing",
+      "organizations",
+      "policies",
+      "reports",
+      "system",
+    ];
+    if (
+      category &&
+      category !== "all" &&
+      allowedCategories.includes(category)
+    ) {
       filter.category = category;
     }
 

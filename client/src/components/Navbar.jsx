@@ -205,11 +205,6 @@ const Navbar = () => {
     return currentPath === tabPath;
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
-    setUnreadCount(0);
-  };
-
   const appLinks = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Meetings", href: "/meetings", icon: Calendar },
