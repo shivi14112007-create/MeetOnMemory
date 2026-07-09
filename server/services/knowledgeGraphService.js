@@ -1,0 +1,181 @@
+import Decision from "../models/decisionModel.js";
+import ActionItem from "../models/actionItemModel.js";
+import { embedText } from "../utils/embeddingUtils.js";
+
+const SIMILARITY_THRESHOLD = 0.85; // conservative, per issue's technical considerations
+
+function cosineSimilarity(a, b) {
+  if (!a?.length || !b?.length || a.length !== b.length) return 0;
+  let dot = 0, normA = 0, normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  if (normA === 0 || normB === 0) return 0;
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+async function findBestMatch(Model, text, embedding, organization) {
+  if (!embedding?.length) return null;
+
+  // Scope candidates to the same organization (multi-tenant correctness)
+  const candidates = await Model.find({
+    organization: organization || null,
+    embedding: { $exists: true, $ne: [] },
+  }).limit(200); // cap for performance; fine at this scale
+
+  let best = null;
+  let bestScore = 0;
+
+  for (const candidate of candidates) {
+    const score = cosineSimilarity(embedding, candidate.embedding);
+    if (score > bestScore) {
+      bestScore = score;
+      best = candidate;
+    }
+  }
+
+  return bestScore >= SIMILARITY_THRESHOLD ? best : null;
+}
+
+/**
+ * Called after a meeting's structuredMoM is generated/updated.
+ * Extracts decisions/action_items, embeds them, links to prior related entries.
+ */
+export async function processStructuredMoM(meeting, mom) {
+  const organization = meeting.organization || null;
+  const results = { decisions: [], actionItems: [] };
+
+  // --- Decisions ---
+  for (const decisionText of mom.decisions || []) {
+    const text = typeof decisionText === "string" ? decisionText : decisionText.text || "";
+    if (!text.trim()) continue;
+
+    const embedding = await embedText(text);
+    const match = await findBestMatch(Decision, text, embedding, organization);
+    const existingDecision = await Decision.findOne({
+      text,
+      sourceMeetingId: meeting._id,
+     });
+
+    if (existingDecision) {
+      results.decisions.push(existingDecision);
+      continue;
+   }
+    const decision = await Decision.create({
+      text,
+      sourceMeetingId: meeting._id,
+      organization,
+      embedding,
+      relatesTo: match ? [match._id] : [],
+    });
+
+    if (match) {
+      match.relatesTo.push(decision._id);
+      await match.save();
+    }
+
+    results.decisions.push(decision);
+  }
+
+  // --- Action Items ---
+  for (const item of mom.action_items || []) {
+    const text = typeof item === "string" ? item : item.task || item.action || "";
+    if (!text.trim()) continue;
+
+    const owner = typeof item === "object" ? item.owner || "Unassigned" : "Unassigned";
+    const dueDate = typeof item === "object" && item.due_date ? new Date(item.due_date) : null;
+
+    const embedding = await embedText(text);
+    const match = await findBestMatch(ActionItem, text, embedding, organization);
+    const existingActionItem = await ActionItem.findOne({
+      text,
+      sourceMeetingId: meeting._id,
+  });
+
+    if (existingActionItem) {
+      results.actionItems.push(existingActionItem);
+      continue;
+   }
+    const actionItem = await ActionItem.create({
+      text,
+      owner,
+      dueDate,
+      sourceMeetingId: meeting._id,
+      organization,
+      embedding,
+      relatesTo: match ? [match._id] : [],
+    });
+
+    if (match) {
+      match.relatesTo.push(actionItem._id);
+      await match.save();
+    }
+
+    results.actionItems.push(actionItem);
+  }
+
+  return results;
+}
+
+/**
+ * Returns the chronological chain of decisions related to a given decision ID.
+ */
+export async function getDecisionLineage(decisionId) {
+  const visited = new Set();
+  const chain = [];
+
+  async function walk(id) {
+    if (visited.has(id.toString())) return;
+    visited.add(id.toString());
+
+    const decision = await Decision.findById(id).populate("sourceMeetingId", "title date");
+    if (!decision) return;
+    chain.push(decision);
+
+    for (const relatedId of decision.relatesTo) {
+      await walk(relatedId);
+    }
+  }
+
+  await walk(decisionId);
+  chain.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  return chain;
+}
+
+/**
+ * Attempts to detect resolution mentions of open action items within a new meeting's transcript/summary.
+ * Simple heuristic: reuses the AI-generated summary text to check for completion phrasing near
+ * a semantically similar action item. Kept intentionally conservative (embedding match required)
+ * to avoid false-positive auto-resolutions.
+ */
+export async function detectResolutions(meeting, mom) {
+  const organization = meeting.organization || null;
+  const openItems = await ActionItem.find({ organization, status: { $in: ["open", "in-progress"] } });
+  if (!openItems.length) return [];
+
+  const resolvedNowIds = [];
+  const summaryText = (mom.summary || "") + " " + (mom.key_discussions || []).join(" ");
+  const completionPhrases = ["completed", "done", "resolved", "finished", "closed out", "wrapped up"];
+
+  const hasCompletionLanguage = completionPhrases.some((p) =>
+    summaryText.toLowerCase().includes(p),
+  );
+  if (!hasCompletionLanguage) return [];
+
+  const summaryEmbedding = await embedText(summaryText);
+
+  for (const item of openItems) {
+    const score = cosineSimilarity(summaryEmbedding, item.embedding);
+    if (score >= SIMILARITY_THRESHOLD) {
+      item.status = "resolved";
+      item.resolvedAt = new Date();
+      item.resolvedInMeetingId = meeting._id;
+      await item.save();
+      resolvedNowIds.push(item._id);
+    }
+  }
+
+  return resolvedNowIds;
+}

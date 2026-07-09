@@ -4,7 +4,7 @@ import FormData from "form-data";
 import Meeting from "../models/meetingModel.js";
 import { indexMeeting } from "../utils/embeddingUtils.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
+import { processStructuredMoM, detectResolutions } from "../services/knowledgeGraphService.js";
 /**
  * Meeting Controller - Handles all meeting operations
  *
@@ -626,6 +626,18 @@ ${textToSummarize}
       }
 
       console.log("✅ MoM saved to database");
+            // --- NEW: Knowledge graph processing ---
+      if (meetingToUpdate) {
+       try {
+         await detectResolutions(meetingToUpdate, mom);
+         await processStructuredMoM(meetingToUpdate, mom);
+       } catch (kgError) {
+         console.error(
+           "⚠️ Knowledge graph processing failed (non-fatal):",
+           kgError,
+         );
+       }
+      }    
 
       return res.status(200).json({
         success: true,

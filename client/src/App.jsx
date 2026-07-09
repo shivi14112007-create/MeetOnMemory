@@ -29,6 +29,7 @@ import Profile from "./pages/Profile.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Notifications from "./pages/Notifications.jsx";
 import Tasks from "./pages/Tasks.jsx";
+import KnowledgeTimeline from "./pages/KnowledgeTimeline.jsx";
 import Settings from "./pages/Settings.jsx";
 
 // --- Components ---
@@ -132,7 +133,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/knowledge/:decisionId"
+          element={
+             <ProtectedRoute>
+              <KnowledgeTimeline />
+             </ProtectedRoute>
+         }
+        />
         <Route
           path="/select-role"
           element={

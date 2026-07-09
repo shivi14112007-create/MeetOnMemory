@@ -28,13 +28,14 @@ import {
  */
 
 const STATUS_STYLES = {
-  "to-do": {
-    label: "To Do",
+  open: {
+    label: "Open",
     bgColor: "bg-slate-100",
     textColor: "text-slate-700",
     borderColor: "border-slate-200",
     icon: Clock,
   },
+
   "in-progress": {
     label: "In Progress",
     bgColor: "bg-blue-50",
@@ -42,21 +43,24 @@ const STATUS_STYLES = {
     borderColor: "border-blue-200",
     icon: Loader2,
   },
-  completed: {
-    label: "Completed",
+
+  resolved: {
+    label: "Resolved",
     bgColor: "bg-emerald-50",
     textColor: "text-emerald-700",
     borderColor: "border-emerald-200",
     icon: CheckCircle2,
   },
-  overdue: {
-    label: "Overdue",
+
+  superseded: {
+    label: "Superseded",
     bgColor: "bg-red-50",
     textColor: "text-red-700",
     borderColor: "border-red-200",
     icon: AlertCircle,
   },
 };
+    
 
 const PRIORITY_STYLES = {
   high: {
@@ -103,95 +107,53 @@ const Tasks = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // Extract tasks from meetings
-  useEffect(() => {
-    const fetchMeetingsAndExtractTasks = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+   // Fetch action items
+useEffect(() => {
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const res = await axios.get(`${backendUrl}/api/meetings/all`, {
+      const res = await axios.get(
+        `${backendUrl}/api/knowledge/action-items?status=all`,
+        {
           withCredentials: true,
-        });
-
-        if (res.data?.success) {
-          const meetingsData = res.data.meetings || [];
-
-          // Extract action items from structuredMoM
-          const extractedTasks = [];
-          meetingsData.forEach((meeting) => {
-            const actionItems = meeting.structuredMoM?.action_items || [];
-            actionItems.forEach((item, index) => {
-              const taskText =
-                typeof item === "string"
-                  ? item
-                  : item.task || item.action || "";
-              if (taskText.trim()) {
-                const dueDate = item.due_date || null;
-                const status = item.status?.toLowerCase() || "to-do";
-                const owner = item.owner || "Unassigned";
-
-                // Determine priority based on keywords or default to medium
-                let priority = "medium";
-                const textLower = taskText.toLowerCase();
-                if (
-                  textLower.includes("urgent") ||
-                  textLower.includes("critical") ||
-                  textLower.includes("asap")
-                ) {
-                  priority = "high";
-                } else if (
-                  textLower.includes("low priority") ||
-                  textLower.includes("when possible")
-                ) {
-                  priority = "low";
-                }
-
-                // Check if overdue
-                let finalStatus = status;
-                if (
-                  dueDate &&
-                  new Date(dueDate) < new Date() &&
-                  status !== "completed"
-                ) {
-                  finalStatus = "overdue";
-                }
-
-                extractedTasks.push({
-                  id: `${meeting._id}-${index}`,
-                  title: taskText,
-                  owner,
-                  dueDate,
-                  status: finalStatus,
-                  priority,
-                  meetingId: meeting._id,
-                  meetingTitle: meeting.title,
-                  organization: meeting.organization?.name || "Personal",
-                  meetingDate: meeting.date,
-                  description:
-                    typeof item === "string"
-                      ? taskText
-                      : item.description || taskText,
-                });
-              }
-            });
-          });
-
-          setTasks(extractedTasks);
-        } else {
-          setError(res.data?.message || "Failed to load tasks");
-          toast.error(res.data?.message || "Failed to load tasks");
         }
-      } catch (err) {
-        console.error("Error fetching tasks:", err);
-        setError("Unable to fetch tasks");
-        toast.error("Unable to fetch tasks");
-      } finally {
-        setLoading(false);
-      }
-    };
+      );
 
-    fetchMeetingsAndExtractTasks();
-  }, [backendUrl]);
+      if (res.data?.success) {
+        const items = res.data.actionItems.map((item) => ({
+          id: item._id,
+          title: item.text,
+          owner: item.owner || "Unassigned",
+          dueDate: item.dueDate,
+          status: item.status || "open",
+
+          meetingId: item.sourceMeetingId?._id,
+          meetingTitle: item.sourceMeetingId?.title,
+          meetingDate: item.sourceMeetingId?.date,
+
+          priority: item.priority || "medium",
+          organization: item.sourceMeetingId?.organization?.name || "Personal",
+          description: item.description || item.text,
+      }));
+        setTasks(items);
+      } else {
+        setError(res.data?.message || "Failed to load tasks");
+        toast.error(res.data?.message || "Failed to load tasks");
+      }
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+      setError("Unable to fetch tasks");
+      toast.error("Unable to fetch tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchTasks();
+}, [backendUrl]);
+        
 
   // Get unique values for filters
   const organizations = [...new Set(tasks.map((t) => t.organization))];
@@ -202,11 +164,10 @@ const Tasks = () => {
     // Search filter
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch =
-      task.title.toLowerCase().includes(searchLower) ||
-      task.meetingTitle.toLowerCase().includes(searchLower) ||
-      task.owner.toLowerCase().includes(searchLower) ||
-      task.description.toLowerCase().includes(searchLower);
-
+      task.title?.toLowerCase().includes(searchLower) ||
+      task.meetingTitle?.toLowerCase().includes(searchLower) ||
+      task.owner?.toLowerCase().includes(searchLower) ||
+      task.description?.toLowerCase().includes(searchLower);
     // Status filter
     const matchesStatus =
       statusFilter === "all" || task.status === statusFilter;
@@ -254,11 +215,11 @@ const Tasks = () => {
       }
       case "status": {
         const statusOrder = {
-          overdue: 0,
-          "to-do": 1,
-          "in-progress": 2,
-          completed: 3,
-        };
+           open: 0,
+           "in-progress": 1,
+           resolved: 2,
+           superseded: 3,
+     };
         comparison = statusOrder[a.status] - statusOrder[b.status];
         break;
       }
@@ -360,10 +321,10 @@ const Tasks = () => {
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="all">All Status</option>
-                    <option value="to-do">To Do</option>
+                    <option value="open">Open</option>
                     <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="overdue">Overdue</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="superseded">Superseded</option>
                   </select>
                 </div>
 
