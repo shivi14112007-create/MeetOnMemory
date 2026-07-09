@@ -208,10 +208,12 @@ const CreateMeeting = () => {
       : "without recording";
     toast.success(`🎥 Starting live meeting ${recordingStatus}...`);
 
+    const roomId = Math.random().toString(36).substring(2, 10) + "-" + Math.random().toString(36).substring(2, 6);
+
     // Redirect to meeting room with parameters
     setTimeout(() => {
       window.open(
-        `/meeting-room?recording=${willRecord}&participants=${encodeURIComponent(JSON.stringify(liveParticipants))}`,
+        `/meeting-room/${roomId}`,
         "_blank",
       );
 
@@ -791,7 +793,7 @@ const CreateMeeting = () => {
 
             {/* Start Meeting Button */}
             <a
-              href="/meeting-room"
+              href="#"
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => {

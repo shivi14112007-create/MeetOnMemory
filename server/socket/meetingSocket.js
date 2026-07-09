@@ -1,15 +1,75 @@
 export default (io) => {
+  const usersInRoom = {}; // roomId -> Array of { socketId, ...userInfo }
+  const socketToRoom = {}; // socketId -> roomId
+
   io.on("connection", (socket) => {
     console.log("🟢 User connected:", socket.id);
 
-    socket.on("join-meeting", ({ roomId }) => {
+    // Join room
+    socket.on("join-meeting", ({ roomId, userInfo }) => {
+      // Initialize room array if not exists
+      if (!usersInRoom[roomId]) {
+        usersInRoom[roomId] = [];
+      }
+
+      const user = { socketId: socket.id, ...userInfo };
+      usersInRoom[roomId].push(user);
+      socketToRoom[socket.id] = roomId;
+
       socket.join(roomId);
-      socket.to(roomId).emit("user-joined", socket.id);
-      console.log(`User joined room: ${roomId}`);
+
+      // Tell the newly joined user about other users in the room
+      const usersInThisRoom = usersInRoom[roomId].filter(id => id.socketId !== socket.id);
+      socket.emit("all-users", usersInThisRoom);
+
+      // Tell everyone else that a new user joined
+      socket.to(roomId).emit("user-joined", user);
+      console.log(`User ${socket.id} joined room: ${roomId}`);
     });
 
+    // WebRTC Signaling: relaying signals
+    socket.on("sending-signal", (payload) => {
+      // payload: { userToSignal, callerID, signal }
+      io.to(payload.userToSignal).emit("user-joined-signal", { 
+        signal: payload.signal, 
+        callerID: payload.callerID,
+        userInfo: payload.userInfo
+      });
+    });
+
+    socket.on("returning-signal", (payload) => {
+      // payload: { signal, callerID }
+      io.to(payload.callerID).emit("receiving-returned-signal", {
+        signal: payload.signal, 
+        id: socket.id 
+      });
+    });
+
+    // Toggle media state tracking (optional)
+    socket.on("media-state-changed", ({ roomId, type, enabled }) => {
+      socket.to(roomId).emit("user-media-changed", {
+        socketId: socket.id,
+        type, // 'audio' | 'video' | 'screen'
+        enabled
+      });
+    });
+
+    // Disconnect handling
     socket.on("disconnect", () => {
       console.log("🔴 User disconnected:", socket.id);
+      const roomId = socketToRoom[socket.id];
+      let room = usersInRoom[roomId];
+      
+      if (room) {
+        room = room.filter(u => u.socketId !== socket.id);
+        usersInRoom[roomId] = room;
+        if (room.length === 0) {
+          delete usersInRoom[roomId];
+        }
+      }
+      
+      socket.to(roomId).emit("user-left", socket.id);
+      delete socketToRoom[socket.id];
     });
   });
 };

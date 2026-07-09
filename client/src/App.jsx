@@ -215,7 +215,7 @@ const App = () => {
           }
         />
 
-        <Route path="/meeting-room" element={<MeetingRoom />} />
+        <Route path="/meeting-room/:roomId" element={<MeetingRoom />} />
 
         <Route
           path="/meeting/:id"
