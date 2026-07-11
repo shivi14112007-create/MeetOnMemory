@@ -23,6 +23,7 @@ const Settings = () => {
   const { userData, logoutUser } = useContext(AppContent);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   // Notification preferences state (UI only - no backend support)
   const [notificationPrefs, setNotificationPrefs] = useState({
@@ -30,11 +31,6 @@ const Settings = () => {
     organizationUpdates: true,
     aiProcessingUpdates: true,
     emailNotifications: true,
-  });
-
-  // Appearance preferences state (UI only - no backend support)
-  const [appearancePrefs, setAppearancePrefs] = useState({
-    theme: "light",
   });
 
   // Preferences state (UI only - placeholders)
