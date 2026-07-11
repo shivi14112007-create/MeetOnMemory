@@ -45,22 +45,22 @@ const JoinOrganizationPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-950">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar />
       <div className="flex-grow flex items-center justify-center">
-        <div className="bg-white dark:bg-gray-900 border dark:border-gray-800 p-10 rounded-lg shadow-xl dark:shadow-none w-full max-w-lg text-center">
-          <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white font-sans">Join an Organization</h1>
+        <div className="bg-white p-10 rounded-lg shadow-xl w-full max-w-lg text-center">
+          <h1 className="text-3xl font-bold mb-6">Join an Organization</h1>
           {loading ? (
-            <p className="text-gray-500 dark:text-gray-400">Loading organizations...</p>
+            <p>Loading organizations...</p>
           ) : orgList.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400">No organizations available yet.</p>
+            <p>No organizations available yet.</p>
           ) : (
             <div className="flex flex-col gap-4">
               {orgList.map((org) => (
                 <button
                   key={org._id}
                   onClick={() => handleJoin(org._id)}
-                  className="p-4 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-all cursor-pointer font-semibold"
+                  className="p-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all"
                 >
                   {org.name}
                 </button>
