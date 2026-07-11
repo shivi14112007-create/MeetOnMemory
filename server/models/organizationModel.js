@@ -6,23 +6,58 @@ const organizationSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Organization name is required"],
-      unique: true,
       trim: true,
+      maxlength: [100, "Organization name cannot exceed 100 characters"],
     },
-    createdBy: {
+    slug: {
+      type: String,
+      required: [true, "Organization slug is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"],
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Description cannot exceed 500 characters"],
+      default: "",
+    },
+    logo: {
+      type: String,
+      default: "",
+    },
+    visibility: {
+      type: String,
+      enum: ["public", "private"],
+      default: "private",
+    },
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user", // reference to user model
+      ref: "user",
       required: true,
     },
+    // Deprecated: Use Membership model instead
+    // Kept for backward compatibility during migration
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user", // reference to user model
+        ref: "user",
       },
     ],
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
   },
   { timestamps: true },
 );
+
+// Indexes for performance
+organizationSchema.index({ slug: 1 });
+organizationSchema.index({ owner: 1 });
+organizationSchema.index({ visibility: 1 });
+organizationSchema.index({ createdAt: -1 });
 
 const Organization =
   mongoose.models.Organization ||
