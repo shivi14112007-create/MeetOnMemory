@@ -45,7 +45,7 @@ const Settings = () => {
 
   if (!userData) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-slate-50 dark:bg-gray-900 flex flex-col">
         <Navbar />
         <div className="flex-1 flex justify-center items-center">
           <Loader2 className="animate-spin w-8 h-8 text-blue-500" />
@@ -86,16 +86,16 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 text-slate-800 flex flex-col font-sans select-none">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 dark:text-gray-200 flex flex-col font-sans select-none">
       <Navbar />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         {/* Page title header */}
         <div className="text-center mb-8 fade-in-up stagger-1">
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-gray-100 sm:text-4xl">
             Settings
           </h1>
-          <p className="text-slate-500 mt-2 text-sm max-w-md mx-auto">
+          <p className="text-slate-500 dark:text-gray-400 mt-2 text-sm max-w-md mx-auto">
             Manage your account preferences, notifications, and security
             settings.
           </p>
@@ -103,48 +103,48 @@ const Settings = () => {
 
         <div className="space-y-6">
           {/* Account Settings Section */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm fade-in-up stagger-2">
+          <div className="bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl p-6 shadow-sm fade-in-up stagger-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-blue-50 rounded-xl">
+              <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
                 <User className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100">
                   Account Settings
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-gray-400">
                   View and manage your account information
                 </p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div className="flex items-center gap-3">
-                  <User className="w-4 h-4 text-slate-400" />
+                  <User className="w-4 h-4 text-slate-400 dark:text-gray-500" />
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <p className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider">
                       Name
                     </p>
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                       {userData.name}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => navigate("/profile")}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   Edit Profile
                   <ChevronRight className="w-3 h-3" />
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-slate-400" />
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <p className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider">
                       Email
                     </p>
                     <p className="text-sm font-semibold text-slate-900 break-all">
@@ -154,14 +154,14 @@ const Settings = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div className="flex items-center gap-3">
                   <Building2 className="w-4 h-4 text-slate-400" />
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <p className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider">
                       Organization
                     </p>
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                       {userData.organization?.name || "No Organization"}
                     </p>
                   </div>
@@ -170,9 +170,9 @@ const Settings = () => {
 
               <div className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
-                  <Shield className="w-4 h-4 text-slate-400" />
+                  <Shield className="w-4 h-4 text-slate-400 dark:text-gray-500" />
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <p className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider">
                       Role
                     </p>
                     <p className="text-sm font-semibold text-slate-900 capitalize">
@@ -187,12 +187,12 @@ const Settings = () => {
           {/* Appearance Section */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm fade-in-up stagger-3">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-purple-50 rounded-xl">
+              <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
                 <Palette className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Appearance</h2>
-                <p className="text-xs text-slate-500">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100">Appearance</h2>
+                <p className="text-xs text-slate-500 dark:text-gray-400">
                   Customize your application theme
                 </p>
               </div>
@@ -201,8 +201,8 @@ const Settings = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between py-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Theme</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">Theme</p>
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Choose your preferred theme
                   </p>
                 </div>
@@ -212,7 +212,7 @@ const Settings = () => {
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       appearancePrefs.theme === "light"
                         ? "bg-blue-600 text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        : "bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-600"
                     }`}
                   >
                     Light
@@ -222,7 +222,7 @@ const Settings = () => {
                     className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       appearancePrefs.theme === "dark"
                         ? "bg-blue-600 text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        : "bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-600"
                     }`}
                   >
                     Dark
@@ -235,26 +235,26 @@ const Settings = () => {
           {/* Notification Preferences Section */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm fade-in-up stagger-4">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-amber-50 rounded-xl">
+              <div className="p-2 bg-amber-50 dark:bg-amber-900/30 rounded-xl">
                 <Bell className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100">
                   Notification Preferences
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-gray-400">
                   Manage how you receive notifications
                 </p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     Meeting Notifications
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Get notified about meeting updates
                   </p>
                 </div>
@@ -265,7 +265,7 @@ const Settings = () => {
                   className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${
                     notificationPrefs.meetingNotifications
                       ? "bg-blue-600"
-                      : "bg-slate-200"
+                      : "bg-slate-200 dark:bg-gray-600"
                   }`}
                   aria-pressed={notificationPrefs.meetingNotifications}
                 >
@@ -279,12 +279,12 @@ const Settings = () => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     Organization Updates
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Updates about your organization
                   </p>
                 </div>
@@ -295,7 +295,7 @@ const Settings = () => {
                   className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${
                     notificationPrefs.organizationUpdates
                       ? "bg-blue-600"
-                      : "bg-slate-200"
+                      : "bg-slate-200 dark:bg-gray-600"
                   }`}
                   aria-pressed={notificationPrefs.organizationUpdates}
                 >
@@ -309,12 +309,12 @@ const Settings = () => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     AI Processing Updates
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Notifications when AI processing completes
                   </p>
                 </div>
@@ -325,7 +325,7 @@ const Settings = () => {
                   className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${
                     notificationPrefs.aiProcessingUpdates
                       ? "bg-blue-600"
-                      : "bg-slate-200"
+                      : "bg-slate-200 dark:bg-gray-600"
                   }`}
                   aria-pressed={notificationPrefs.aiProcessingUpdates}
                 >
@@ -341,10 +341,10 @@ const Settings = () => {
 
               <div className="flex items-center justify-between py-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     Email Notifications
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Receive notifications via email
                   </p>
                 </div>
@@ -353,7 +353,7 @@ const Settings = () => {
                   className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${
                     notificationPrefs.emailNotifications
                       ? "bg-blue-600"
-                      : "bg-slate-200"
+                      : "bg-slate-200 dark:bg-gray-600"
                   }`}
                   aria-pressed={notificationPrefs.emailNotifications}
                 >
@@ -372,12 +372,12 @@ const Settings = () => {
           {/* Security Section */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm fade-in-up stagger-5">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-red-50 rounded-xl">
+              <div className="p-2 bg-red-50 dark:bg-red-900/30 rounded-xl">
                 <Shield className="w-5 h-5 text-red-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Security</h2>
-                <p className="text-xs text-slate-500">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100">Security</h2>
+                <p className="text-xs text-slate-500 dark:text-gray-400">
                   Manage your account security settings
                 </p>
               </div>
@@ -386,55 +386,55 @@ const Settings = () => {
             <div className="space-y-4">
               <button
                 onClick={() => navigate("/reset-password")}
-                className="w-full flex items-center justify-between py-3 px-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                className="w-full flex items-center justify-between py-3 px-4 rounded-xl hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
-                  <Lock className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+                  <Lock className="w-4 h-4 text-slate-400 dark:text-gray-500 group-hover:text-slate-600 dark:group-hover:text-gray-300" />
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                       Change Password
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-gray-400">
                       Update your password
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+                <ChevronRight className="w-4 h-4 text-slate-400 dark:text-gray-500 group-hover:text-slate-600 dark:group-hover:text-gray-300" />
               </button>
 
               <div className="w-full flex items-center justify-between py-3 px-4 rounded-xl opacity-50 cursor-not-allowed">
                 <div className="flex items-center gap-3">
-                  <Shield className="w-4 h-4 text-slate-400" />
+                  <Shield className="w-4 h-4 text-slate-400 dark:text-gray-500" />
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                       Two-Factor Authentication
                     </p>
-                    <p className="text-xs text-slate-500">Coming soon</p>
+                    <p className="text-xs text-slate-500 dark:text-gray-400">Coming soon</p>
                   </div>
                 </div>
-                <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+                <span className="text-xs font-semibold text-slate-400 dark:text-gray-500 bg-slate-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                   Soon
                 </span>
               </div>
 
               <div className="w-full flex items-center justify-between py-3 px-4 rounded-xl opacity-50 cursor-not-allowed">
                 <div className="flex items-center gap-3">
-                  <Globe className="w-4 h-4 text-slate-400" />
+                  <Globe className="w-4 h-4 text-slate-400 dark:text-gray-500" />
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                       Active Sessions
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-gray-400">
                       Manage your active sessions
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+                <span className="text-xs font-semibold text-slate-400 dark:text-gray-500 bg-slate-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                   Soon
                 </span>
               </div>
 
-              <hr className="border-slate-100" />
+              <hr className="border-slate-100 dark:border-gray-700" />
 
               <button
                 onClick={handleLogout}
@@ -459,26 +459,26 @@ const Settings = () => {
           {/* Preferences Section */}
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm fade-in-up stagger-6">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-green-50 rounded-xl">
+              <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-xl">
                 <Globe className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100">
                   Preferences
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-gray-400">
                   Configure your application preferences
                 </p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     Language
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Select your preferred language
                   </p>
                 </div>
@@ -500,18 +500,18 @@ const Settings = () => {
                 </select>
               </div>
 
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-gray-700">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     Time Zone
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Set your time zone
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  <span className="text-xs font-semibold text-slate-600">
+                  <Clock className="w-4 h-4 text-slate-400 dark:text-gray-500" />
+                  <span className="text-xs font-semibold text-slate-600 dark:text-gray-400">
                     {generalPrefs.timeZone}
                   </span>
                 </div>
@@ -519,10 +519,10 @@ const Settings = () => {
 
               <div className="flex items-center justify-between py-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     Date Format
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Choose your date format preference
                   </p>
                 </div>

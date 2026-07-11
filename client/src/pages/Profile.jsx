@@ -49,7 +49,7 @@ const Profile = () => {
 
   if (!userData) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-slate-50 dark:bg-gray-900 flex flex-col">
         <Navbar />
         <div className="flex-1 flex justify-center items-center">
           <Loader2 className="animate-spin w-8 h-8 text-blue-500" />
@@ -156,36 +156,36 @@ const Profile = () => {
     : "Member";
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 text-slate-800 flex flex-col font-sans select-none">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 dark:text-gray-200 flex flex-col font-sans select-none">
       <Navbar />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 flex flex-col justify-center">
         {/* Page title header */}
         <div className="text-center mb-8 fade-in-up stagger-1">
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-gray-100 sm:text-4xl">
             User Profile
           </h1>
-          <p className="text-slate-500 mt-2 text-sm max-w-md mx-auto">
+          <p className="text-slate-500 dark:text-gray-400 mt-2 text-sm max-w-md mx-auto">
             Manage your personal credentials, view your organization link, and
             customize your bio.
           </p>
         </div>
 
         {/* Profile Card component - exact reference design in light theme */}
-        <div className="w-full bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-sm relative fade-in-up stagger-2 max-w-2xl mx-auto transition-all duration-300">
+        <div className="w-full bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl p-6 sm:p-8 shadow-sm relative fade-in-up stagger-2 max-w-2xl mx-auto transition-all duration-300">
           {/* Toggled content */}
           {!isEditing ? (
             // ================= VIEW STATE =================
             <div className="space-y-6">
               {/* Header section */}
-              <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-6 pb-6 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-6 pb-6 border-b border-slate-100 dark:border-gray-700">
                 <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
                   {/* Custom initials / profile image */}
                   {userData.profilePic && !profilePicFailed ? (
                     <img
                       src={userData.profilePic}
                       alt={userData.name}
-                      className="w-20 h-20 rounded-full object-cover border border-slate-200 shadow-xs"
+                      className="w-20 h-20 rounded-full object-cover border border-slate-200 dark:border-gray-600 shadow-xs"
                       onError={async () => {
                         toast.warning(
                           "Failed to load custom profile image. Displaying initials fallback.",
@@ -216,20 +216,20 @@ const Profile = () => {
                   )}
 
                   <div className="space-y-1">
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-gray-100 tracking-tight">
                       {userData.name}
                     </h2>
                     <div className="flex items-center justify-center sm:justify-start gap-2">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
                         {displayRole}
                       </span>
                       {userData.isAccountVerified ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800">
                           <ShieldCheck className="w-3 h-3 text-emerald-600" />
                           Verified
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full border border-amber-100 dark:border-amber-800">
                           <ShieldAlert className="w-3 h-3 text-amber-600" />
                           Unverified
                         </span>
@@ -240,7 +240,7 @@ const Profile = () => {
 
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all shadow-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-gray-100 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 border border-slate-200 dark:border-gray-700 rounded-xl transition-all shadow-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   <Edit2 className="w-3 h-3" />
                   Edit profile
@@ -248,30 +248,30 @@ const Profile = () => {
               </div>
 
               {/* Grid details section */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 py-2 text-slate-600">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 py-2 text-slate-600 dark:text-gray-400">
                 <div className="space-y-1.5">
                   <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <Mail className="w-3 h-3 text-slate-400" />
+                    <Mail className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                     Email
                   </div>
-                  <div className="text-sm font-semibold text-slate-900 break-all">
+                  <div className="text-sm font-semibold text-slate-900 dark:text-gray-100 break-all">
                     {userData.email}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <Building2 className="w-3 h-3 text-slate-400" />
+                    <Building2 className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                     Organization
                   </div>
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     {userData.organization?.name || "No Organization"}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <User className="w-3 h-3 text-slate-400" />
+                    <User className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                     Role
                   </div>
                   <div className="text-sm font-semibold text-slate-900 capitalize">
@@ -281,21 +281,21 @@ const Profile = () => {
 
                 <div className="space-y-1.5">
                   <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                    <Calendar className="w-3 h-3 text-slate-400" />
+                    <Calendar className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                     Member since
                   </div>
-                  <div className="text-sm font-semibold text-slate-900">
+                  <div className="text-sm font-semibold text-slate-900 dark:text-gray-100">
                     {formattedMemberSince}
                   </div>
                 </div>
               </div>
 
               {/* Bio section */}
-              <div className="pt-6 border-t border-slate-100 space-y-2">
-                <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+              <div className="pt-6 border-t border-slate-100 dark:border-gray-700 space-y-2">
+                <div className="text-[11px] text-slate-400 dark:text-gray-500 font-bold uppercase tracking-wider">
                   Bio
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed italic">
+                <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed italic">
                   {userData.bio || "No bio added yet. Tell us about yourself!"}
                 </p>
               </div>
@@ -303,14 +303,14 @@ const Profile = () => {
           ) : (
             // ================= EDIT STATE =================
             <form onSubmit={handleSave} className="space-y-6">
-              <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-900">
+              <div className="pb-4 border-b border-slate-100 dark:border-gray-700 flex items-center justify-between">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-gray-100">
                   Edit Profile Details
                 </h3>
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
+                  className="p-1.5 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
                   aria-label="Cancel editing"
                 >
                   <X className="w-4 h-4" />
@@ -322,12 +322,12 @@ const Profile = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="name-input"
-                    className="block text-xs font-bold text-slate-500 uppercase tracking-wider"
+                    className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     Full Name
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-gray-500" />
                     <input
                       id="name-input"
                       type="text"
@@ -335,11 +335,11 @@ const Profile = () => {
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your Full Name"
                       disabled={loading}
-                      className={`w-full bg-slate-50/50 hover:bg-slate-50 border ${
+                      className={`w-full bg-slate-50/50 dark:bg-gray-700/50 hover:bg-slate-50 dark:hover:bg-gray-700 border ${
                         errors.name
                           ? "border-red-500/80"
-                          : "border-slate-200 focus:border-blue-500 focus:bg-white"
-                      } rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 transition-all outline-none`}
+                          : "border-slate-200 dark:border-gray-600 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800"
+                      } rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-800 dark:text-gray-200 placeholder-slate-400 dark:placeholder-gray-500 transition-all outline-none`}
                     />
                   </div>
                   {errors.name && (
@@ -353,12 +353,12 @@ const Profile = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="pic-input"
-                    className="block text-xs font-bold text-slate-500 uppercase tracking-wider"
+                    className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     Profile Picture URL
                   </label>
                   <div className="relative">
-                    <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-gray-500" />
                     <input
                       id="pic-input"
                       type="text"
@@ -366,11 +366,11 @@ const Profile = () => {
                       onChange={(e) => setProfilePic(e.target.value)}
                       placeholder="https://example.com/avatar.jpg"
                       disabled={loading}
-                      className={`w-full bg-slate-50/50 hover:bg-slate-50 border ${
+                      className={`w-full bg-slate-50/50 dark:bg-gray-700/50 hover:bg-slate-50 dark:hover:bg-gray-700 border ${
                         errors.profilePic
                           ? "border-red-500/80"
-                          : "border-slate-200 focus:border-blue-500 focus:bg-white"
-                      } rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-800 placeholder-slate-400 transition-all outline-none`}
+                          : "border-slate-200 dark:border-gray-600 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800"
+                      } rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-800 dark:text-gray-200 placeholder-slate-400 dark:placeholder-gray-500 transition-all outline-none`}
                     />
                   </div>
                   {errors.profilePic && (
@@ -384,7 +384,7 @@ const Profile = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="bio-input"
-                    className="block text-xs font-bold text-slate-500 uppercase tracking-wider"
+                    className="block text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     Bio (Optional)
                   </label>
@@ -396,21 +396,21 @@ const Profile = () => {
                     disabled={loading}
                     rows="3"
                     maxLength="250"
-                    className="w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white rounded-xl py-2.5 px-4 text-sm text-slate-800 placeholder-slate-400 transition-all outline-none resize-none"
+                    className="w-full bg-slate-50/50 dark:bg-gray-700/50 hover:bg-slate-50 dark:hover:bg-gray-700 border border-slate-200 dark:border-gray-600 focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 rounded-xl py-2.5 px-4 text-sm text-slate-800 dark:text-gray-200 placeholder-slate-400 dark:placeholder-gray-500 transition-all outline-none resize-none"
                   />
-                  <div className="flex justify-end text-[10px] text-slate-400 font-bold">
+                  <div className="flex justify-end text-[10px] text-slate-400 dark:text-gray-500 font-bold">
                     {bio.length}/250 characters
                   </div>
                 </div>
               </div>
 
               {/* Action buttons */}
-              <div className="flex justify-end items-center gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end items-center gap-3 pt-4 border-t border-slate-100 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={handleCancel}
                   disabled={loading}
-                  className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 border border-slate-200 dark:border-gray-700 rounded-xl transition-all cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>

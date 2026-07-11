@@ -14,20 +14,20 @@ const MeetingListPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       {/* Navbar */}
       <Navbar />
 
       {/* Page Header */}
       <header className="text-center mt-16 mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100">
           Welcome,{" "}
-          <span className="text-blue-600">
+          <span className="text-blue-600 dark:text-blue-400">
             {userData ? userData.name : "User"}
           </span>
           !
         </h1>
-        <p className="text-gray-500 mt-2 text-base">
+        <p className="text-gray-500 dark:text-gray-400 mt-2 text-base">
           Browse, search, and manage all your uploaded meetings
         </p>
       </header>
@@ -36,8 +36,8 @@ const MeetingListPage = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
         {/* Top Actions */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-500" />
+          <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800 dark:text-gray-100">
+            <Calendar className="w-5 h-5 text-blue-500 dark:text-blue-400" />
             Meeting Repository
           </h2>
 

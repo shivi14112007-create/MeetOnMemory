@@ -149,30 +149,30 @@ const Calendar = () => {
     switch (status) {
       case "completed":
         return {
-          bg: "bg-emerald-50 hover:bg-emerald-100/80 border-emerald-200 text-emerald-800",
+          bg: "bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100/80 dark:hover:bg-emerald-900/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300",
           dot: "bg-emerald-500",
-          badge: "bg-emerald-50 text-emerald-700 border-emerald-100",
+          badge: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-800",
           icon: CheckCircle,
         };
       case "processing":
         return {
-          bg: "bg-amber-50 hover:bg-amber-100/80 border-amber-200 text-amber-800 animate-pulse",
+          bg: "bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100/80 dark:hover:bg-amber-900/40 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 animate-pulse",
           dot: "bg-amber-500",
-          badge: "bg-amber-50 text-amber-700 border-amber-100",
+          badge: "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-800",
           icon: Loader2,
         };
       case "failed":
         return {
-          bg: "bg-rose-50 hover:bg-rose-100/80 border-rose-200 text-rose-800",
+          bg: "bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100/80 dark:hover:bg-rose-900/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300",
           dot: "bg-rose-500",
-          badge: "bg-rose-50 text-rose-700 border-rose-100",
+          badge: "bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-800",
           icon: AlertCircle,
         };
       default: // uploaded / upcoming
         return {
-          bg: "bg-blue-50 hover:bg-blue-100/80 border-blue-200 text-blue-800",
+          bg: "bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100/80 dark:hover:bg-blue-900/40 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300",
           dot: "bg-blue-500",
-          badge: "bg-blue-50 text-blue-700 border-blue-100",
+          badge: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800",
           icon: HelpCircle,
         };
     }
@@ -289,18 +289,18 @@ const Calendar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 text-slate-800 flex flex-col font-sans select-none">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 dark:text-gray-200 flex flex-col font-sans select-none">
       <Navbar />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 flex flex-col">
         {/* Navigation & Toolbar Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-5 border-b border-slate-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-5 border-b border-slate-200 dark:border-gray-700">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-gray-100 flex items-center gap-2.5">
               <CalendarIcon className="w-7 h-7 text-blue-600" />
               Calendar & Schedule
             </h1>
-            <p className="text-slate-500 mt-1 text-xs sm:text-sm">
+            <p className="text-slate-500 dark:text-gray-400 mt-1 text-xs sm:text-sm">
               Visualize your upcoming schedule, review minutes, and manage
               meeting timelines.
             </p>
@@ -316,47 +316,47 @@ const Calendar = () => {
         </div>
 
         {/* Calendar Nav + Filters Panel */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs mb-6 space-y-4">
+        <div className="bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl p-5 shadow-xs mb-6 space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Prev/Next buttons */}
             <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-              <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden shadow-xs shrink-0">
+              <div className="flex items-center border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-xs shrink-0">
                 <button
                   onClick={handlePrev}
-                  className="p-2 hover:bg-slate-50 text-slate-600 border-r border-slate-200 cursor-pointer"
+                  className="p-2 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-600 dark:text-gray-300 border-r border-slate-200 dark:border-gray-700 cursor-pointer"
                   aria-label="Previous"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleToday}
-                  className="px-3.5 py-2 text-xs font-semibold hover:bg-slate-50 text-slate-700 cursor-pointer bg-white"
+                  className="px-3.5 py-2 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300 cursor-pointer bg-white dark:bg-gray-800"
                 >
                   Today
                 </button>
                 <button
                   onClick={handleNext}
-                  className="p-2 hover:bg-slate-50 text-slate-600 border-l border-slate-200 cursor-pointer"
+                  className="p-2 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-600 dark:text-gray-300 border-l border-slate-200 dark:border-gray-700 cursor-pointer"
                   aria-label="Next"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-              <h2 className="text-lg font-bold text-slate-900 font-sans tracking-tight ml-2">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100 font-sans tracking-tight ml-2">
                 {getHeaderDateString()}
               </h2>
             </div>
 
             {/* View togglers */}
-            <div className="bg-slate-100/80 p-0.5 rounded-xl flex border border-slate-200/40 w-full sm:w-auto shadow-inner">
+            <div className="bg-slate-100/80 dark:bg-gray-700/50 p-0.5 rounded-xl flex border border-slate-200/40 dark:border-gray-600 w-full sm:w-auto shadow-inner">
               {["month", "week", "day"].map((v) => (
                 <button
                   key={v}
                   onClick={() => setView(v)}
                   className={`flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-lg capitalize transition-all cursor-pointer ${
                     view === v
-                      ? "bg-white text-slate-900 shadow-xs border border-slate-200/20"
-                      : "text-slate-500 hover:text-slate-800"
+                      ? "bg-white dark:bg-gray-800 text-slate-900 dark:text-gray-100 shadow-xs border border-slate-200/20 dark:border-gray-700"
+                      : "text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200"
                   }`}
                 >
                   {v}
@@ -366,15 +366,15 @@ const Calendar = () => {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
+          <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-100 dark:border-gray-700 text-xs font-medium text-slate-500 dark:text-gray-400">
             <div className="flex items-center gap-1.5 shrink-0">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
+              <Filter className="w-3.5 h-3.5 text-slate-400 dark:text-gray-500" />
               <span>Filters:</span>
             </div>
 
             {/* Date filter (Jump to Date) */}
-            <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/80 rounded-lg px-2.5 py-1 text-slate-700 select-none">
-              <span className="text-[10px] text-slate-400 uppercase font-bold mr-1">
+            <div className="flex items-center gap-1 bg-slate-50 dark:bg-gray-700 border border-slate-200/80 dark:border-gray-600 rounded-lg px-2.5 py-1 text-slate-700 dark:text-gray-300 select-none">
+              <span className="text-[10px] text-slate-400 dark:text-gray-500 uppercase font-bold mr-1">
                 Date:
               </span>
               <input
@@ -385,7 +385,7 @@ const Calendar = () => {
                     setCurrentDate(new Date(e.target.value + "T00:00:00"));
                   }
                 }}
-                className="bg-transparent border-none text-slate-700 outline-none cursor-pointer text-xs font-semibold"
+                className="bg-transparent border-none text-slate-700 dark:text-gray-300 outline-none cursor-pointer text-xs font-semibold"
               />
             </div>
 
@@ -393,7 +393,7 @@ const Calendar = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg px-2.5 py-1.5 text-slate-700 outline-none transition-all cursor-pointer"
+              className="bg-slate-50 dark:bg-gray-700 hover:bg-slate-100 dark:hover:bg-gray-600 border border-slate-200/80 dark:border-gray-600 rounded-lg px-2.5 py-1.5 text-slate-700 dark:text-gray-300 outline-none transition-all cursor-pointer"
             >
               <option value="all">All Statuses</option>
               <option value="uploaded">Uploaded / Upcoming</option>
@@ -406,7 +406,7 @@ const Calendar = () => {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg px-2.5 py-1.5 text-slate-700 outline-none transition-all cursor-pointer"
+              className="bg-slate-50 dark:bg-gray-700 hover:bg-slate-100 dark:hover:bg-gray-600 border border-slate-200/80 dark:border-gray-600 rounded-lg px-2.5 py-1.5 text-slate-700 dark:text-gray-300 outline-none transition-all cursor-pointer"
             >
               <option value="all">All Types</option>
               <option value="conference">Conference</option>
@@ -419,7 +419,7 @@ const Calendar = () => {
             <select
               value={orgFilter}
               onChange={(e) => setOrgFilter(e.target.value)}
-              className="bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg px-2.5 py-1.5 text-slate-700 outline-none transition-all cursor-pointer"
+              className="bg-slate-50 dark:bg-gray-700 hover:bg-slate-100 dark:hover:bg-gray-600 border border-slate-200/80 dark:border-gray-600 rounded-lg px-2.5 py-1.5 text-slate-700 dark:text-gray-300 outline-none transition-all cursor-pointer"
             >
               <option value="all">All Organizations</option>
               <option value="personal">Personal Meetings (None)</option>
@@ -434,22 +434,22 @@ const Calendar = () => {
 
         {/* Loading Spinner */}
         {loading ? (
-          <div className="flex-1 min-h-[400px] flex flex-col justify-center items-center bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+          <div className="flex-1 min-h-[400px] flex flex-col justify-center items-center bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl shadow-xs">
             <Loader2 className="animate-spin w-8 h-8 text-blue-500" />
-            <span className="ml-3 text-slate-500 font-medium mt-2">
+            <span className="ml-3 text-slate-500 dark:text-gray-400 font-medium mt-2">
               Fetching meetings...
             </span>
           </div>
         ) : filteredMeetings.length === 0 ? (
           /* Empty State */
-          <div className="flex-1 min-h-[400px] flex flex-col justify-center items-center bg-white border border-slate-200/80 rounded-2xl p-8 text-center shadow-xs">
-            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
-              <Inbox className="w-7 h-7 text-slate-400" />
+          <div className="flex-1 min-h-[400px] flex flex-col justify-center items-center bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl p-8 text-center shadow-xs">
+            <div className="w-16 h-16 bg-slate-50 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4 border border-slate-100 dark:border-gray-600">
+              <Inbox className="w-7 h-7 text-slate-400 dark:text-gray-500" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-gray-200">
               No Scheduled Meetings
             </h3>
-            <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-sm">
+            <p className="text-slate-500 dark:text-gray-400 text-xs sm:text-sm mt-1 max-w-sm">
               There are no meetings scheduled matching the selected filters.
               Change filters or create a new meeting.
             </p>
@@ -463,12 +463,12 @@ const Calendar = () => {
           </div>
         ) : (
           /* CALENDAR VIEWS */
-          <div className="flex-1 bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden">
+          <div className="flex-1 bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl shadow-xs overflow-hidden">
             {/* MONTH VIEW */}
             {view === "month" && (
               <div className="flex flex-col h-full min-w-[700px]">
                 {/* Weekday headers */}
-                <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider py-3 text-center">
+                <div className="grid grid-cols-7 border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-700/50 text-slate-500 dark:text-gray-400 text-[11px] font-bold uppercase tracking-wider py-3 text-center">
                   <div>Sun</div>
                   <div>Mon</div>
                   <div>Tue</div>
@@ -489,10 +489,10 @@ const Calendar = () => {
                     return (
                       <div
                         key={idx}
-                        className={`min-h-[100px] p-2 border-r border-b border-slate-100 last:border-r-0 flex flex-col justify-between transition-colors ${
+                        className={`min-h-[100px] p-2 border-r border-b border-slate-100 dark:border-gray-700 last:border-r-0 flex flex-col justify-between transition-colors ${
                           cell.isCurrentMonth
-                            ? "bg-white"
-                            : "bg-slate-50/50 text-slate-300"
+                            ? "bg-white dark:bg-gray-800"
+                            : "bg-slate-50/50 dark:bg-gray-800/50 text-slate-300 dark:text-gray-500"
                         }`}
                       >
                         {/* Day Number */}
@@ -502,8 +502,8 @@ const Calendar = () => {
                               isToday
                                 ? "bg-blue-600 text-white shadow-xs"
                                 : cell.isCurrentMonth
-                                  ? "text-slate-700"
-                                  : "text-slate-400"
+                                  ? "text-slate-700 dark:text-gray-300"
+                                  : "text-slate-400 dark:text-gray-500"
                             }`}
                           >
                             {cell.date.getDate()}
@@ -528,7 +528,7 @@ const Calendar = () => {
                             );
                           })}
                           {dayEvents.length > 3 && (
-                            <div className="text-[9px] font-bold text-blue-600 text-center py-0.5">
+                            <div className="text-[9px] font-bold text-blue-600 dark:text-blue-400 text-center py-0.5">
                               + {dayEvents.length - 3} more
                             </div>
                           )}
@@ -544,8 +544,8 @@ const Calendar = () => {
             {view === "week" && (
               <div className="flex flex-col h-full min-w-[800px]">
                 {/* Week Headers */}
-                <div className="grid grid-cols-8 border-b border-slate-200 bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider py-3 text-center">
-                  <div className="border-r border-slate-100">Time</div>
+                <div className="grid grid-cols-8 border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-700/50 text-slate-500 dark:text-gray-400 text-[11px] font-bold uppercase tracking-wider py-3 text-center">
+                  <div className="border-r border-slate-100 dark:border-gray-700">Time</div>
                   {getWeekDays(currentDate).map((day, idx) => {
                     const isToday = isSameDay(new Date(), day);
                     return (
@@ -562,7 +562,7 @@ const Calendar = () => {
                           className={`text-xs px-2 py-0.5 rounded-full flex items-center justify-center ${
                             isToday
                               ? "bg-blue-600 text-white font-bold"
-                              : "text-slate-800"
+                              : "text-slate-800 dark:text-gray-200"
                           }`}
                         >
                           {day.getDate()}
@@ -576,7 +576,7 @@ const Calendar = () => {
                 <div className="flex flex-col flex-1 h-[600px] overflow-y-auto">
                   <div className="grid grid-cols-8 relative h-[650px]">
                     {/* Y-Axis Hourly labels */}
-                    <div className="col-span-1 border-r border-slate-100 bg-slate-50/50 flex flex-col justify-between py-2 text-[10px] text-slate-400 font-bold text-right pr-3">
+                    <div className="col-span-1 border-r border-slate-100 dark:border-gray-700 bg-slate-50/50 dark:bg-gray-700/50 flex flex-col justify-between py-2 text-[10px] text-slate-400 dark:text-gray-500 font-bold text-right pr-3">
                       {Array.from({ length: 13 }).map((_, h) => (
                         <div
                           key={h}
@@ -600,13 +600,13 @@ const Calendar = () => {
                       return (
                         <div
                           key={dIdx}
-                          className="col-span-1 border-r border-slate-100 last:border-r-0 relative bg-white h-full"
+                          className="col-span-1 border-r border-slate-100 dark:border-gray-700 last:border-r-0 relative bg-white dark:bg-gray-800 h-full"
                         >
                           {/* Hour Dividers in background */}
                           {Array.from({ length: 13 }).map((_, h) => (
                             <div
                               key={h}
-                              className="absolute left-0 right-0 border-b border-slate-50"
+                              className="absolute left-0 right-0 border-b border-slate-50 dark:border-gray-700"
                               style={{ top: `${h * 50}px`, height: "50px" }}
                             />
                           ))}
@@ -659,19 +659,19 @@ const Calendar = () => {
             {view === "day" && (
               <div className="flex flex-col h-full md:flex-row">
                 {/* Left side Timeline Column */}
-                <div className="flex-1 flex flex-col border-r border-slate-100 max-h-[600px] overflow-y-auto">
-                  <div className="bg-slate-50/50 py-3 px-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <div className="flex-1 flex flex-col border-r border-slate-100 dark:border-gray-700 max-h-[600px] overflow-y-auto">
+                  <div className="bg-slate-50/50 dark:bg-gray-700/50 py-3 px-4 border-b border-slate-100 dark:border-gray-700 flex items-center justify-between">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">
                       Timeline
                     </h3>
-                    <span className="text-xs font-semibold text-slate-500">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">
                       Hourly Schedule
                     </span>
                   </div>
 
                   <div className="relative h-[650px] p-4 pr-6 flex">
                     {/* Hourly scale */}
-                    <div className="w-20 text-[10px] text-slate-400 font-bold text-right pr-3 flex flex-col justify-between py-2 shrink-0">
+                    <div className="w-20 text-[10px] text-slate-400 dark:text-gray-500 font-bold text-right pr-3 flex flex-col justify-between py-2 shrink-0">
                       {Array.from({ length: 13 }).map((_, h) => (
                         <div
                           key={h}
@@ -687,12 +687,12 @@ const Calendar = () => {
                     </div>
 
                     {/* Timeline grid content */}
-                    <div className="flex-1 relative border-l border-slate-100 pl-4 h-full">
+                    <div className="flex-1 relative border-l border-slate-100 dark:border-gray-700 pl-4 h-full">
                       {/* Hour Grid Dividers */}
                       {Array.from({ length: 13 }).map((_, h) => (
                         <div
                           key={h}
-                          className="absolute left-0 right-0 border-b border-slate-100/50"
+                          className="absolute left-0 right-0 border-b border-slate-100/50 dark:border-gray-700"
                           style={{ top: `${h * 50}px`, height: "50px" }}
                         />
                       ))}
@@ -741,8 +741,8 @@ const Calendar = () => {
                 </div>
 
                 {/* Right side chronological list card */}
-                <div className="w-full md:w-80 bg-slate-50/50 p-5 flex flex-col h-full max-h-[600px] overflow-y-auto">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-4">
+                <div className="w-full md:w-80 bg-slate-50/50 dark:bg-gray-700/50 p-5 flex flex-col h-full max-h-[600px] overflow-y-auto">
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 dark:text-gray-500 mb-4">
                     List Agenda
                   </h3>
 
@@ -762,7 +762,7 @@ const Calendar = () => {
                           <div
                             key={event._id}
                             onClick={() => setSelectedMeeting(event)}
-                            className="bg-white border border-slate-200/80 hover:border-slate-300 p-4 rounded-xl shadow-2xs hover:shadow-xs transition-all cursor-pointer flex items-start gap-3"
+                            className="bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 hover:border-slate-300 dark:hover:border-gray-600 p-4 rounded-xl shadow-2xs hover:shadow-xs transition-all cursor-pointer flex items-start gap-3"
                           >
                             <div
                               className={`p-2 rounded-xl shrink-0 ${style.bg} border`}
@@ -770,15 +770,15 @@ const Calendar = () => {
                               <StatusIcon className="w-4 h-4" />
                             </div>
                             <div className="overflow-hidden space-y-1">
-                              <h4 className="font-bold text-slate-900 text-sm truncate">
+                              <h4 className="font-bold text-slate-900 dark:text-gray-100 text-sm truncate">
                                 {event.title}
                               </h4>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase">
+                              <p className="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase">
                                 {formatTimeSlot(event.time)}
                               </p>
                               {event.organization && (
-                                <p className="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1">
-                                  <Briefcase className="w-3 h-3 text-slate-400" />
+                                <p className="text-[10px] text-slate-500 dark:text-gray-400 font-medium truncate flex items-center gap-1">
+                                  <Briefcase className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                                   {event.organization.name ||
                                     event.organization}
                                 </p>
@@ -797,15 +797,15 @@ const Calendar = () => {
 
       {/* QUICK DETAILS MODAL */}
       {selectedMeeting && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-6 relative overflow-hidden"
+            className="w-full max-w-md bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl shadow-xl p-6 relative overflow-hidden"
           >
             {/* Close button */}
             <button
               onClick={() => setSelectedMeeting(null)}
-              className="absolute right-4 top-4 p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg cursor-pointer"
+              className="absolute right-4 top-4 p-1 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -817,17 +817,17 @@ const Calendar = () => {
               >
                 {selectedMeeting.status}
               </span>
-              <h3 className="text-xl font-bold text-slate-900 leading-tight">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-gray-100 leading-tight">
                 {selectedMeeting.title}
               </h3>
             </div>
 
             {/* Detail rows */}
-            <div className="space-y-4 text-sm text-slate-600 border-t border-b border-slate-100 py-4 mb-5">
+            <div className="space-y-4 text-sm text-slate-600 dark:text-gray-400 border-t border-b border-slate-100 dark:border-gray-700 py-4 mb-5">
               <div className="flex items-start gap-3">
-                <Clock className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                <Clock className="w-4 h-4 text-slate-400 dark:text-gray-500 mt-0.5 shrink-0" />
                 <div>
-                  <div className="font-semibold text-slate-800">
+                  <div className="font-semibold text-slate-800 dark:text-gray-200">
                     {new Date(selectedMeeting.date).toLocaleDateString(
                       "en-US",
                       {
@@ -838,7 +838,7 @@ const Calendar = () => {
                       },
                     )}
                   </div>
-                  <div className="text-xs text-slate-500 font-bold uppercase mt-0.5">
+                  <div className="text-xs text-slate-500 dark:text-gray-400 font-bold uppercase mt-0.5">
                     {formatTimeSlot(selectedMeeting.time)} (
                     {selectedMeeting.duration || 60} mins)
                   </div>
@@ -847,9 +847,9 @@ const Calendar = () => {
 
               {selectedMeeting.organization && (
                 <div className="flex items-center gap-3">
-                  <Briefcase className="w-4 h-4 text-slate-400 shrink-0" />
+                  <Briefcase className="w-4 h-4 text-slate-400 dark:text-gray-500 shrink-0" />
                   <div>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-slate-800 dark:text-gray-200">
                       Organization:
                     </span>{" "}
                     {selectedMeeting.organization.name ||
@@ -859,9 +859,9 @@ const Calendar = () => {
               )}
 
               <div className="flex items-center gap-3">
-                <Layers className="w-4 h-4 text-slate-400 shrink-0" />
+                <Layers className="w-4 h-4 text-slate-400 dark:text-gray-500 shrink-0" />
                 <div>
-                  <span className="font-semibold text-slate-800">Type:</span>{" "}
+                  <span className="font-semibold text-slate-800 dark:text-gray-200">Type:</span>{" "}
                   <span className="capitalize">
                     {selectedMeeting.meetingType || "Conference"}
                   </span>
@@ -870,9 +870,9 @@ const Calendar = () => {
 
               {selectedMeeting.location && (
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+                  <MapPin className="w-4 h-4 text-slate-400 dark:text-gray-500 shrink-0" />
                   <div>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-slate-800 dark:text-gray-200">
                       Location:
                     </span>{" "}
                     {selectedMeeting.location}
@@ -882,10 +882,10 @@ const Calendar = () => {
 
               {selectedMeeting.description && (
                 <div className="pt-2">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                  <p className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider mb-1">
                     Description
                   </p>
-                  <p className="text-xs text-slate-500 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 leading-relaxed bg-slate-50 dark:bg-gray-700 p-2.5 rounded-lg border border-slate-100 dark:border-gray-600">
                     {selectedMeeting.description}
                   </p>
                 </div>

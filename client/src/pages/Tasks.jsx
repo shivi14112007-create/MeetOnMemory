@@ -30,33 +30,33 @@ import {
 const STATUS_STYLES = {
   open: {
     label: "Open",
-    bgColor: "bg-slate-100",
-    textColor: "text-slate-700",
-    borderColor: "border-slate-200",
+    bgColor: "bg-slate-100 dark:bg-gray-800",
+    textColor: "text-slate-700 dark:text-gray-300",
+    borderColor: "border-slate-200 dark:border-gray-700",
     icon: Clock,
   },
 
   "in-progress": {
     label: "In Progress",
-    bgColor: "bg-blue-50",
-    textColor: "text-blue-700",
-    borderColor: "border-blue-200",
+    bgColor: "bg-blue-50 dark:bg-blue-900/30",
+    textColor: "text-blue-700 dark:text-blue-300",
+    borderColor: "border-blue-200 dark:border-blue-800",
     icon: Loader2,
   },
 
   resolved: {
     label: "Resolved",
-    bgColor: "bg-emerald-50",
-    textColor: "text-emerald-700",
-    borderColor: "border-emerald-200",
+    bgColor: "bg-emerald-50 dark:bg-emerald-900/30",
+    textColor: "text-emerald-700 dark:text-emerald-300",
+    borderColor: "border-emerald-200 dark:border-emerald-800",
     icon: CheckCircle2,
   },
 
   superseded: {
     label: "Superseded",
-    bgColor: "bg-red-50",
-    textColor: "text-red-700",
-    borderColor: "border-red-200",
+    bgColor: "bg-red-50 dark:bg-red-900/30",
+    textColor: "text-red-700 dark:text-red-300",
+    borderColor: "border-red-200 dark:border-red-800",
     icon: AlertCircle,
   },
 };
@@ -64,21 +64,21 @@ const STATUS_STYLES = {
 const PRIORITY_STYLES = {
   high: {
     label: "High",
-    bgColor: "bg-red-100",
-    textColor: "text-red-700",
-    borderColor: "border-red-200",
+    bgColor: "bg-red-100 dark:bg-red-900/30",
+    textColor: "text-red-700 dark:text-red-300",
+    borderColor: "border-red-200 dark:border-red-800",
   },
   medium: {
     label: "Medium",
-    bgColor: "bg-amber-100",
-    textColor: "text-amber-700",
-    borderColor: "border-amber-200",
+    bgColor: "bg-amber-100 dark:bg-amber-900/30",
+    textColor: "text-amber-700 dark:text-amber-300",
+    borderColor: "border-amber-200 dark:border-amber-800",
   },
   low: {
     label: "Low",
-    bgColor: "bg-slate-100",
-    textColor: "text-slate-700",
-    borderColor: "border-slate-200",
+    bgColor: "bg-slate-100 dark:bg-gray-800",
+    textColor: "text-slate-700 dark:text-gray-300",
+    borderColor: "border-slate-200 dark:border-gray-700",
   },
 };
 
@@ -253,16 +253,16 @@ const Tasks = () => {
     assignedFilter !== "all";
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 flex flex-col">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 flex flex-col">
       <Navbar />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         {/* Header */}
         <div className="mb-8 fade-in-up">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-gray-100 mb-2">
             Tasks & Action Items
           </h1>
-          <p className="text-slate-600">
+          <p className="text-slate-600 dark:text-gray-400">
             Track and manage action items from your meeting summaries
           </p>
         </div>
@@ -272,13 +272,13 @@ const Tasks = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Search tasks, meetings, or assignees..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-gray-200"
               />
             </div>
 
@@ -287,8 +287,8 @@ const Tasks = () => {
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl font-medium transition-all ${
                 showFilters || hasActiveFilters
-                  ? "bg-blue-50 border-blue-200 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                  ? "bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
+                  : "border-slate-200 dark:border-gray-700 text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800"
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -301,17 +301,17 @@ const Tasks = () => {
 
           {/* Filter Panel */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-white border border-slate-200 rounded-xl fade-in-up">
+            <div className="mt-4 p-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl fade-in-up">
               <div className="flex flex-wrap gap-4">
                 {/* Status Filter */}
                 <div className="flex-1 min-w-[150px]">
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                     Status
                   </label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-200"
                   >
                     <option value="all">All Status</option>
                     <option value="open">Open</option>
@@ -323,13 +323,13 @@ const Tasks = () => {
 
                 {/* Priority Filter */}
                 <div className="flex-1 min-w-[150px]">
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                     Priority
                   </label>
                   <select
                     value={priorityFilter}
                     onChange={(e) => setPriorityFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-200"
                   >
                     <option value="all">All Priorities</option>
                     <option value="high">High</option>
@@ -340,13 +340,13 @@ const Tasks = () => {
 
                 {/* Organization Filter */}
                 <div className="flex-1 min-w-[150px]">
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                     Organization
                   </label>
                   <select
                     value={organizationFilter}
                     onChange={(e) => setOrganizationFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-200"
                   >
                     <option value="all">All Organizations</option>
                     {organizations.map((org) => (
@@ -359,13 +359,13 @@ const Tasks = () => {
 
                 {/* Assigned Filter */}
                 <div className="flex-1 min-w-[150px]">
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                     Assigned To
                   </label>
                   <select
                     value={assignedFilter}
                     onChange={(e) => setAssignedFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-gray-200"
                   >
                     <option value="all">All Assignees</option>
                     {assignedUsers.map((user) => (
@@ -393,7 +393,7 @@ const Tasks = () => {
 
         {/* Sorting */}
         <div className="mb-6 flex items-center gap-4 text-sm fade-in-up stagger-2">
-          <span className="text-slate-500">Sort by:</span>
+          <span className="text-slate-500 dark:text-gray-400">Sort by:</span>
           <div className="flex flex-wrap gap-2">
             {[
               { field: "dueDate", label: "Due Date" },
@@ -407,8 +407,8 @@ const Tasks = () => {
                 onClick={() => handleSort(sort.field)}
                 className={`flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
                   sortBy === sort.field
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                    : "text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-800"
                 }`}
               >
                 {sort.label}
@@ -427,15 +427,15 @@ const Tasks = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 fade-in-up">
             <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
-            <p className="text-slate-600">Loading tasks...</p>
+            <p className="text-slate-600 dark:text-gray-400">Loading tasks...</p>
           </div>
         ) : error ? (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center fade-in-up">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 text-center fade-in-up">
             <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-red-900 mb-2">
+            <h3 className="text-lg font-semibold text-red-900 dark:text-red-300 mb-2">
               Error Loading Tasks
             </h3>
-            <p className="text-red-700">{error}</p>
+            <p className="text-red-700 dark:text-red-300">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -444,16 +444,16 @@ const Tasks = () => {
             </button>
           </div>
         ) : sortedTasks.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center fade-in-up">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-8 h-8 text-slate-400" />
+          <div className="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl p-12 text-center fade-in-up">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-slate-400 dark:text-gray-500" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-100 mb-2">
               {hasActiveFilters
                 ? "No tasks match your filters"
                 : "No action items yet"}
             </h3>
-            <p className="text-slate-600 mb-6">
+            <p className="text-slate-600 dark:text-gray-400 mb-6">
               {hasActiveFilters
                 ? "Try adjusting your filters or search terms"
                 : "Upload and transcribe meetings to generate action items"}
@@ -481,13 +481,13 @@ const Tasks = () => {
                 <div
                   key={task.id}
                   onClick={() => setSelectedTask(task)}
-                  className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                  className="group bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all cursor-pointer"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* Task Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start gap-3 mb-2">
-                        <h3 className="text-base font-semibold text-slate-900 line-clamp-2">
+                        <h3 className="text-base font-semibold text-slate-900 dark:text-gray-100 line-clamp-2">
                           {task.title}
                         </h3>
                         <span
@@ -497,7 +497,7 @@ const Tasks = () => {
                         </span>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600 dark:text-gray-400">
                         {/* Status */}
                         <span
                           className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium border ${statusStyle.bgColor} ${statusStyle.textColor} ${statusStyle.borderColor}`}
@@ -534,7 +534,7 @@ const Tasks = () => {
                         e.stopPropagation();
                         navigate(`/meeting/${task.meetingId}`);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors shrink-0"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors shrink-0"
                     >
                       <FileText className="w-4 h-4" />
                       <span className="hidden sm:inline">View Meeting</span>
@@ -554,18 +554,18 @@ const Tasks = () => {
             onClick={() => setSelectedTask(null)}
           >
             <div
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between p-6 border-b border-slate-200">
-                <h2 className="text-xl font-bold text-slate-900">
+              <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-gray-100">
                   Task Details
                 </h2>
                 <button
                   onClick={() => setSelectedTask(null)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5 text-slate-600" />
+                  <X className="w-5 h-5 text-slate-600 dark:text-gray-400" />
                 </button>
               </div>
 
@@ -573,10 +573,10 @@ const Tasks = () => {
                 <div className="space-y-6">
                   {/* Task Title */}
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-100 mb-2">
                       {selectedTask.title}
                     </h3>
-                    <p className="text-slate-600">{selectedTask.description}</p>
+                    <p className="text-slate-600 dark:text-gray-400">{selectedTask.description}</p>
                   </div>
 
                   {/* Status and Priority */}
@@ -613,44 +613,44 @@ const Tasks = () => {
 
                   {/* Details */}
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="p-4 bg-slate-50 rounded-xl">
-                      <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                    <div className="p-4 bg-slate-50 dark:bg-gray-700 rounded-xl">
+                      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-gray-400 mb-1">
                         <User className="w-4 h-4" />
                         Assigned To
                       </div>
-                      <p className="font-medium text-slate-900">
+                      <p className="font-medium text-slate-900 dark:text-gray-100">
                         {selectedTask.owner}
                       </p>
                     </div>
 
                     {selectedTask.dueDate && (
-                      <div className="p-4 bg-slate-50 rounded-xl">
-                        <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                      <div className="p-4 bg-slate-50 dark:bg-gray-700 rounded-xl">
+                        <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-gray-400 mb-1">
                           <Calendar className="w-4 h-4" />
                           Due Date
                         </div>
-                        <p className="font-medium text-slate-900">
+                        <p className="font-medium text-slate-900 dark:text-gray-100">
                           {new Date(selectedTask.dueDate).toLocaleDateString()}
                         </p>
                       </div>
                     )}
 
-                    <div className="p-4 bg-slate-50 rounded-xl">
-                      <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                    <div className="p-4 bg-slate-50 dark:bg-gray-700 rounded-xl">
+                      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-gray-400 mb-1">
                         <Building2 className="w-4 h-4" />
                         Organization
                       </div>
-                      <p className="font-medium text-slate-900">
+                      <p className="font-medium text-slate-900 dark:text-gray-100">
                         {selectedTask.organization}
                       </p>
                     </div>
 
-                    <div className="p-4 bg-slate-50 rounded-xl">
-                      <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+                    <div className="p-4 bg-slate-50 dark:bg-gray-700 rounded-xl">
+                      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-gray-400 mb-1">
                         <FileText className="w-4 h-4" />
                         Meeting Date
                       </div>
-                      <p className="font-medium text-slate-900">
+                      <p className="font-medium text-slate-900 dark:text-gray-100">
                         {new Date(
                           selectedTask.meetingDate,
                         ).toLocaleDateString()}
@@ -659,14 +659,14 @@ const Tasks = () => {
                   </div>
 
                   {/* Related Meeting */}
-                  <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="flex items-center gap-2 text-sm text-blue-600 mb-1">
+                        <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 mb-1">
                           <FileText className="w-4 h-4" />
                           Related Meeting
                         </div>
-                        <p className="font-medium text-slate-900">
+                        <p className="font-medium text-slate-900 dark:text-gray-100">
                           {selectedTask.meetingTitle}
                         </p>
                       </div>
@@ -675,7 +675,7 @@ const Tasks = () => {
                           setSelectedTask(null);
                           navigate(`/meeting/${selectedTask.meetingId}`);
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                       >
                         View Meeting
                         <ExternalLink className="w-3.5 h-3.5" />
