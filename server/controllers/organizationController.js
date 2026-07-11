@@ -2,6 +2,7 @@
 import Organization from "../models/organizationModel.js";
 import userModel from "../models/userModel.js";
 import { createAndPushNotification } from "../services/notificationService.js";
+import mongoose from "mongoose";
 
 /**
  * ✅ Create or Join Organization
@@ -167,6 +168,13 @@ export const joinOrganization = async (req, res) => {
         .json({ success: false, message: "organizationId is required." });
     }
 
+    // Validate organizationId is a valid MongoDB ObjectId to prevent NoSQL injection
+    if (!mongoose.Types.ObjectId.isValid(organizationId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid organization ID format." });
+    }
+
     const userId = req.user.id;
 
     const organization = await Organization.findById(organizationId);
@@ -247,6 +255,13 @@ export const selectOrganization = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "organizationId is required." });
+    }
+
+    // Validate organizationId is a valid MongoDB ObjectId to prevent NoSQL injection
+    if (!mongoose.Types.ObjectId.isValid(organizationId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid organization ID format." });
     }
 
     const userId = req.user.id;
