@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 const SECTIONS = [
@@ -28,14 +28,14 @@ export default function ScrollNavigator() {
 
   const getSectionElement = (id) => {
     return (
-      document.getElementById(id) || 
-      document.getElementById(id.replace(/-/g, "")) || 
+      document.getElementById(id) ||
+      document.getElementById(id.replace(/-/g, "")) ||
       document.getElementById(id.replace(/([A-Z])/g, "-$1").toLowerCase())
     );
   };
 
   // Linear Element Navigation (With Dynamic Header Height Calculations)
-  const scrollToSectionIndex = (targetIndex) => {
+  const scrollToSectionIndex = useCallback((targetIndex) => {
     if (targetIndex < 0 || targetIndex >= SECTIONS.length) return;
 
     isLockActive.current = true;
@@ -43,7 +43,8 @@ export default function ScrollNavigator() {
 
     if (lockTimeoutRef.current) clearTimeout(lockTimeoutRef.current);
 
-    const totalScrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const totalScrollableHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
 
     if (targetIndex === 0) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -52,16 +53,21 @@ export default function ScrollNavigator() {
     } else {
       const targetSection = SECTIONS[targetIndex];
       const el = getSectionElement(targetSection.id);
-      
+
       if (el) {
-        const headerElement = document.querySelector("header") || document.querySelector("nav");
+        const headerElement =
+          document.querySelector("header") || document.querySelector("nav");
         const headerHeight = headerElement ? headerElement.offsetHeight : 0;
 
-        const elementTopPosition = el.getBoundingClientRect().top + window.scrollY;
+        const elementTopPosition =
+          el.getBoundingClientRect().top + window.scrollY;
         const finalOffsetPosition = elementTopPosition - headerHeight;
 
         window.scrollTo({
-          top: Math.min(totalScrollableHeight, Math.max(0, finalOffsetPosition)),
+          top: Math.min(
+            totalScrollableHeight,
+            Math.max(0, finalOffsetPosition),
+          ),
           behavior: "smooth",
         });
       }
@@ -70,7 +76,7 @@ export default function ScrollNavigator() {
     lockTimeoutRef.current = setTimeout(() => {
       isLockActive.current = false;
     }, 1200);
-  };
+  }, []);
 
   // Core Window Observers & Maximum Visibility Area Engine
   useEffect(() => {
@@ -79,7 +85,8 @@ export default function ScrollNavigator() {
 
       const viewportHeight = window.innerHeight;
       const scrollPosition = window.scrollY;
-      const totalScrollableHeight = document.documentElement.scrollHeight - viewportHeight;
+      const totalScrollableHeight =
+        document.documentElement.scrollHeight - viewportHeight;
 
       if (scrollPosition <= 5) {
         setCurrentIndex(0);
@@ -127,10 +134,10 @@ export default function ScrollNavigator() {
     const onKeyDown = (e) => {
       const activeEl = document.activeElement;
       if (
-        activeEl && 
-        (activeEl.tagName === "INPUT" || 
-         activeEl.tagName === "TEXTAREA" || 
-         activeEl.isContentEditable)
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.isContentEditable)
       ) {
         return;
       }
@@ -164,11 +171,12 @@ export default function ScrollNavigator() {
       if (lockTimeoutRef.current) clearTimeout(lockTimeoutRef.current);
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
-  }, []);
+  }, [scrollToSectionIndex]);
 
   const handleNext = (e) => {
     e.stopPropagation();
-    if (currentIndex < SECTIONS.length - 1) scrollToSectionIndex(currentIndex + 1);
+    if (currentIndex < SECTIONS.length - 1)
+      scrollToSectionIndex(currentIndex + 1);
   };
 
   const handlePrev = (e) => {
@@ -182,10 +190,10 @@ export default function ScrollNavigator() {
 
     isDragging.current = true;
     isHyperScroll.current = e.detail === 2;
-    
+
     dragStartPos.current = { x: e.clientX, y: e.clientY };
     scrollStartY.current = window.scrollY;
-    
+
     if (panelRef.current) {
       panelRef.current.style.cursor = "grabbing";
       panelRef.current.style.transform = "scale(1.02)";
@@ -199,17 +207,20 @@ export default function ScrollNavigator() {
 
     const isMobile = window.innerWidth < 768;
     // Calculate vector delta based on layout orientation
-    const delta = isMobile 
-      ? e.clientX - dragStartPos.current.x 
+    const delta = isMobile
+      ? e.clientX - dragStartPos.current.x
       : e.clientY - dragStartPos.current.y;
 
-    const totalScrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const multiplier = isHyperScroll.current ? 4.5 : totalScrollableHeight / (window.innerHeight * 0.4);
-    
-    const targetScroll = scrollStartY.current + (delta * multiplier);
+    const totalScrollableHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
+    const multiplier = isHyperScroll.current
+      ? 4.5
+      : totalScrollableHeight / (window.innerHeight * 0.4);
+
+    const targetScroll = scrollStartY.current + delta * multiplier;
     window.scrollTo({
       top: Math.max(0, Math.min(totalScrollableHeight, targetScroll)),
-      behavior: "auto"
+      behavior: "auto",
     });
   };
 
@@ -217,7 +228,7 @@ export default function ScrollNavigator() {
     if (!isDragging.current) return;
     isDragging.current = false;
     isHyperScroll.current = false;
-    
+
     if (panelRef.current) {
       panelRef.current.style.cursor = "pointer";
       panelRef.current.style.transform = "scale(1)";
@@ -289,7 +300,9 @@ export default function ScrollNavigator() {
 
         {/* Mobile View Title Card */}
         <div className="md:hidden flex items-center gap-2 select-none pointer-events-none">
-          <span className="text-xs tracking-wider text-zinc-500 uppercase font-mono">Section</span>
+          <span className="text-xs tracking-wider text-zinc-500 uppercase font-mono">
+            Section
+          </span>
           <span className="text-xs font-semibold bg-zinc-800/50 text-zinc-200 px-3 py-1 rounded-md border border-zinc-700/30 min-w-[110px] text-center">
             {SECTIONS[currentIndex]?.label || "Loading..."}
           </span>

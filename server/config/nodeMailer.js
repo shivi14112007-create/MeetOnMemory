@@ -14,7 +14,9 @@ let transporter;
 
 if (isMock) {
   if (process.env.NODE_ENV === "production") {
-    console.warn("⚠️ CRITICAL WARNING: SMTP is running in mock mode in PRODUCTION! Real emails will NOT be sent.");
+    console.warn(
+      "⚠️ CRITICAL WARNING: SMTP is running in mock mode in PRODUCTION! Real emails will NOT be sent.",
+    );
   } else {
     console.log("ℹ️ SMTP is in mock mode (console logging for emails)");
   }
@@ -32,7 +34,7 @@ if (isMock) {
       console.log(options.text || options.html);
       console.log("=========================================");
       return { messageId: "mock-id-" + Date.now() };
-    }
+    },
   };
 } else {
   let host = process.env.SMTP_HOST;
@@ -45,7 +47,9 @@ if (isMock) {
   }
   let port = parseInt(process.env.SMTP_PORT || "587", 10);
   if (isNaN(port)) {
-    console.warn(`⚠️ Invalid SMTP_PORT specified: "${process.env.SMTP_PORT}". Defaulting to 587.`);
+    console.warn(
+      `⚠️ Invalid SMTP_PORT specified: "${process.env.SMTP_PORT}". Defaulting to 587.`,
+    );
     port = 587;
   }
   const secure = process.env.SMTP_SECURE === "true" || port === 465;

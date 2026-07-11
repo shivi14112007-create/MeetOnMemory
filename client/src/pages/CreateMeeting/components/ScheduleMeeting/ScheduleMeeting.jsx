@@ -46,7 +46,7 @@ const ScheduleMeeting = ({ hookProps }) => {
           setScheduleData={setScheduleData}
           handleScheduleChange={handleScheduleChange}
         />
-        
+
         <ParticipantsSection
           participants={participants}
           newParticipant={newParticipant}

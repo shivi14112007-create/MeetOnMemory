@@ -11,7 +11,8 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 // --- Protected Pages ---
 import MeetingListPage from "./pages/MeetingListPage.jsx";
-import SelectRolePage from "./pages/SelectRolePage.jsx";
+import OrganizationHub from "./pages/OrganizationHub.jsx";
+import JoinOrganizationPage from "./pages/JoinOrganizationPage.jsx";
 import CreateOrganizationPage from "./pages/CreateOrganizationPage.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
@@ -44,7 +45,7 @@ const App = () => {
 
   const hideFooterRoutes = ["/login"];
   const shouldShowFooter = !hideFooterRoutes.includes(location.pathname);
-  
+
   // Only activate navigation controller panel when exactly on the landing page fold
   const shouldShowScrollNavigator = location.pathname === "/";
 
@@ -148,10 +149,18 @@ const App = () => {
             }
           />
           <Route
-            path="/select-role"
+            path="/organizations"
             element={
               <ProtectedRoute>
-                <SelectRolePage />
+                <OrganizationHub />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/join-organization"
+            element={
+              <ProtectedRoute>
+                <JoinOrganizationPage />
               </ProtectedRoute>
             }
           />
@@ -292,7 +301,9 @@ const App = () => {
         {!isMobile && (
           <>
             <div className={`custom-cursor ${isHovered ? "hovered" : ""}`} />
-            <div className={`custom-cursor-ring ${isHovered ? "hovered" : ""}`} />
+            <div
+              className={`custom-cursor-ring ${isHovered ? "hovered" : ""}`}
+            />
           </>
         )}
       </ErrorBoundary>

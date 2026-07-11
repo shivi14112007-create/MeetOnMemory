@@ -22,9 +22,9 @@ const RecordingDialog = ({ handleRecordingChoice }) => {
             summarization?
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-gray-700">
-            <strong>With Recording:</strong> AI will transcribe the meeting
-            in real-time and generate a summary with action items after the
-            meeting ends.
+            <strong>With Recording:</strong> AI will transcribe the meeting in
+            real-time and generate a summary with action items after the meeting
+            ends.
           </div>
         </div>
 

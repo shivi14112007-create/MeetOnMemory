@@ -50,9 +50,7 @@ const LiveMeeting = ({ hookProps }) => {
           handleStartLiveMeeting();
         }}
         className={`w-full px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-md hover:shadow-xl ${
-          liveParticipants.length === 0
-            ? "opacity-50 cursor-not-allowed"
-            : ""
+          liveParticipants.length === 0 ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
         <Video size={18} /> 🚀 Start Live Meeting

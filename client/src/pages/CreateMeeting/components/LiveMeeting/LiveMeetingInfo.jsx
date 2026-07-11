@@ -14,11 +14,8 @@ const LiveMeetingInfo = () => {
           <p className="text-gray-700 mb-4 leading-relaxed">
             🔴 Experience <strong>real-time video conferencing</strong>{" "}
             integrated with
-            <strong>
-              {" "}
-              AI-powered transcription and live summarization
-            </strong>
-            . Your meeting notes will be generated instantly with smart
+            <strong> AI-powered transcription and live summarization</strong>.
+            Your meeting notes will be generated instantly with smart
             highlights.
           </p>
 

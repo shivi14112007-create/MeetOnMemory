@@ -9,6 +9,10 @@ import connectDB from "./config/mongodb.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import organizationRoutes from "./routes/organizationRoutes.js";
+import organizationRoutesNew from "./routes/organizationRoutesNew.js";
+import membershipRoutes from "./routes/membershipRoutes.js";
+import membershipRequestRoutes from "./routes/membershipRequestRoutes.js";
+import invitationRoutes from "./routes/invitationRoutes.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
@@ -23,6 +27,15 @@ import meetingSocket from "./socket/meetingSocket.js";
 import { initRedis } from "./services/redisService.js";
 import { globalLimiter } from "./middleware/rateLimiter.js";
 import knowledgeRoutes from "./routes/knowledgeRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env.local if it exists, otherwise fallback to .env
+const envPath = path.resolve(__dirname, '.env.local');
+dotenv.config({ path: envPath });
 dotenv.config();
 
 const app = express();
@@ -138,6 +151,10 @@ app.get("/api/health", (req, res) => {
 // ================================
 app.use("/api/auth", authRoutes);
 app.use("/api/organizations", organizationRoutes);
+app.use("/api/organizations-new", organizationRoutesNew);
+app.use("/api/memberships", membershipRoutes);
+app.use("/api/membership-requests", membershipRequestRoutes);
+app.use("/api/invitations", invitationRoutes);
 app.use("/api/meetings", meetingRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/ai-search", aiRoutes);
@@ -154,7 +171,9 @@ app.use("/api/knowledge", knowledgeRoutes);
 // Initialize vector store in background to avoid blocking server startup
 initVectorStore()
   .then(() => console.log("✅ Vector store initialized"))
-  .catch((error) => console.error("⚠️ Vector store initialization failed:", error.message));
+  .catch((error) =>
+    console.error("⚠️ Vector store initialization failed:", error.message),
+  );
 
 // ================================
 // START SERVER

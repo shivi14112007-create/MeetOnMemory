@@ -1,4 +1,8 @@
-const MeetingInformationForm = ({ scheduleData, setScheduleData, handleScheduleChange }) => {
+const MeetingInformationForm = ({
+  scheduleData,
+  setScheduleData,
+  handleScheduleChange,
+}) => {
   return (
     <>
       {/* Meeting Type */}

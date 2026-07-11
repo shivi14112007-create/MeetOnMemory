@@ -15,28 +15,28 @@ export const initRedis = async () => {
     return;
   }
 
-  redisClient = createClient({
-    url: redisUri,
-    socket: {
-      reconnectStrategy: (retries) => {
-        if (retries > 3) {
-          console.error("⚠️ Redis connection failed after 3 retries. Disabling Redis.");
-          isRedisDisabled = true;
-          return new Error("Retry limit exceeded");
-        }
-        return Math.min(retries * 50, 500); // Wait 50, 100, 150ms...
-      },
-    },
-  });
-
-  redisClient.on("error", (err) => {
-    // Only log if we haven't already disabled it to prevent log spam
-    if (!isRedisDisabled) {
-      console.log(`⚠️ Redis Client Error: ${err.message}`);
-    }
-  });
-
   try {
+    redisClient = createClient({
+      url: redisUri,
+      socket: {
+        reconnectStrategy: (retries) => {
+          if (retries > 3) {
+            console.error("⚠️ Redis connection failed after 3 retries. Disabling Redis.");
+            isRedisDisabled = true;
+            return new Error("Retry limit exceeded");
+          }
+          return Math.min(retries * 50, 500); // Wait 50, 100, 150ms...
+        },
+      },
+    });
+
+    redisClient.on("error", (err) => {
+      // Only log if we haven't already disabled it to prevent log spam
+      if (!isRedisDisabled) {
+        console.log(`⚠️ Redis Client Error: ${err.message}`);
+      }
+    });
+
     await redisClient.connect();
     
     const isLocal = redisUri.includes('localhost') || redisUri.includes('127.0.0.1');
@@ -44,7 +44,8 @@ export const initRedis = async () => {
     
     console.log(`✅ Redis connected successfully (${connectionType})`);
   } catch (error) {
-    console.error("⚠️ Redis initial connection failed:", error.message);
+    console.error("⚠️ Redis connection failed:", error.message);
+    console.warn("⚠️  Server running without Redis. Rate limiting and caching will not work.");
     redisClient = null; // Disable the client for subsequent requests
     isRedisDisabled = true;
   }
