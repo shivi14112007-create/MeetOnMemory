@@ -35,7 +35,7 @@ const JoinOrganizationPage = () => {
       if (data.success) {
         toast.success("Joined organization successfully!");
         await getUserData();
-        navigate("/dashboard");
+        navigate("/organizations");
       } else {
         toast.error(data.message);
       }
