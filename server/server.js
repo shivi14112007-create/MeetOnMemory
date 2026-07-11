@@ -9,6 +9,10 @@ import connectDB from "./config/mongodb.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import organizationRoutes from "./routes/organizationRoutes.js";
+import organizationRoutesNew from "./routes/organizationRoutesNew.js";
+import membershipRoutes from "./routes/membershipRoutes.js";
+import membershipRequestRoutes from "./routes/membershipRequestRoutes.js";
+import invitationRoutes from "./routes/invitationRoutes.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
@@ -138,6 +142,10 @@ app.get("/api/health", (req, res) => {
 // ================================
 app.use("/api/auth", authRoutes);
 app.use("/api/organizations", organizationRoutes);
+app.use("/api/organizations-new", organizationRoutesNew);
+app.use("/api/memberships", membershipRoutes);
+app.use("/api/membership-requests", membershipRequestRoutes);
+app.use("/api/invitations", invitationRoutes);
 app.use("/api/meetings", meetingRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/ai-search", aiRoutes);
