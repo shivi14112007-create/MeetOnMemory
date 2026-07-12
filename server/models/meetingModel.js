@@ -96,6 +96,10 @@ const meetingSchema = new mongoose.Schema(
       default: "uploaded",
     },
     tags: [String], // e.g., ["policy", "finance", "staff"]
+    googleEventId: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );

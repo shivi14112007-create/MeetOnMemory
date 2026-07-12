@@ -10,6 +10,7 @@ import {
   detectResolutions,
 } from "../services/knowledgeGraphService.js";
 import { createAndPushNotification } from "../services/notificationService.js";
+import * as calendarService from "../services/calendarService.js";
 import { aiQueue } from "../services/queueService.js";
 /**
  * Meeting Controller - Handles all meeting operations
@@ -115,6 +116,20 @@ export const createMeeting = async (req, res) => {
       } catch (notifErr) {
         console.error("⚠️ Notification error (continuing):", notifErr.message);
       }
+    }
+
+    // Sync with Google Calendar if enabled
+    try {
+      const user = await User.findById(uploaderId);
+      if (user && user.calendarSyncEnabled) {
+        const eventId = await calendarService.createEvent(user, meeting);
+        if (eventId) {
+          meeting.googleEventId = eventId;
+          await meeting.save();
+        }
+      }
+    } catch (calErr) {
+      console.error("⚠️ Google Calendar sync error (continuing):", calErr.message);
     }
 
     return res.status(200).json({
@@ -795,8 +810,26 @@ export const deleteMeeting = async (req, res) => {
           .status(404)
           .json({ success: false, message: "Meeting not found" });
       }
+
+      // Sync deletion with Google Calendar
+      if (deleted.googleEventId) {
+        const user = await User.findById(deleted.uploadedBy);
+        if (user && user.calendarSyncEnabled) {
+          await calendarService.deleteEvent(user, deleted.googleEventId);
+        }
+      }
     } else {
+      const uploaderId = meeting.uploadedBy;
+      const googleEventId = meeting.googleEventId;
       await meeting.deleteOne();
+
+      // Sync deletion with Google Calendar
+      if (googleEventId) {
+        const user = await User.findById(uploaderId);
+        if (user && user.calendarSyncEnabled) {
+          await calendarService.deleteEvent(user, googleEventId);
+        }
+      }
     }
 
     res
@@ -891,6 +924,18 @@ export const updateMeeting = async (req, res) => {
       await indexMeeting(meeting);
     } catch (idxErr) {
       console.error("⚠️ indexMeeting error (continuing):", idxErr.message);
+    }
+
+    // Sync update with Google Calendar
+    if (meeting.googleEventId) {
+      try {
+        const user = await User.findById(userId);
+        if (user && user.calendarSyncEnabled) {
+          await calendarService.updateEvent(user, meeting);
+        }
+      } catch (calErr) {
+        console.error("⚠️ Google Calendar update sync error:", calErr.message);
+      }
     }
 
     return res.status(200).json({
