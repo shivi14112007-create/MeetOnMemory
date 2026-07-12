@@ -25,11 +25,13 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import knowledgeRoutes from "./routes/knowledgeRoutes.js";
 import policyComplianceRoutes from "./routes/policyComplianceRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
 
 import { initVectorStore } from "./utils/embeddingUtils.js";
 import meetingSocket from "./socket/meetingSocket.js";
 import { initRedis } from "./services/redisService.js";
 import { initAIWorker } from "./services/queueService.js";
+import { initWebhookWorker } from "./services/webhookDispatcherService.js";
 import { globalLimiter } from "./middleware/rateLimiter.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -172,6 +174,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/knowledge", knowledgeRoutes);
 app.use("/api/policy-compliance", policyComplianceRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/webhooks", webhookRoutes);
 
 // ================================
 // VECTOR STORE INIT (Non-blocking)
@@ -215,6 +218,7 @@ app.set("io", io);
 meetingSocket(io);
 if (process.env.NODE_ENV !== "test") {
   initAIWorker(app);
+  initWebhookWorker();
 }
 
 // ================================

@@ -12,6 +12,7 @@ import {
 } from "../services/knowledgeGraphService.js";
 import { checkMeetingDecisionsAgainstPolicies } from "../services/policyComplianceService.js";
 import { createAndPushNotification } from "../services/notificationService.js";
+import eventBus from "../services/eventBus.js";
 
 // Validates any id pulled from req.body/req.params/req.query before it
 // reaches a Mongoose query. Without this, a JSON body like
@@ -143,6 +144,13 @@ export const createMeeting = async (req, res) => {
       }
     } catch (calErr) {
       console.error("⚠️ Google Calendar sync error (continuing):", calErr.message);
+    }
+
+    // Trigger internal event for webhooks
+    try {
+      eventBus.emit("meeting.created", meeting);
+    } catch (evtErr) {
+      console.error("⚠️ Failed to emit meeting.created event:", evtErr.message);
     }
 
     return res.status(200).json({
@@ -710,6 +718,16 @@ ${textToSummarize}
       }
 
       console.log("✅ MoM saved to database");
+
+      // Trigger internal events for webhooks
+      try {
+        if (!meetingId) {
+          eventBus.emit("meeting.created", meetingToUpdate);
+        }
+        eventBus.emit("mom.generated", meetingToUpdate);
+      } catch (evtErr) {
+        console.error("⚠️ Failed to emit webhook events:", evtErr.message);
+      }
       // --- NEW: Knowledge graph processing ---
       if (meetingToUpdate) {
         try {
