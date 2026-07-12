@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import csrf from "csurf";
 import { Server } from "socket.io";
+import http from "http";
 
 import connectDB from "./config/mongodb.js";
 
@@ -48,7 +49,9 @@ const PORT = process.env.PORT || 4000;
 // DATABASE & CACHE
 // ================================
 await connectDB();
-initRedis(); // Non-blocking: allows server to start even if Redis is unavailable
+if (process.env.NODE_ENV !== "test") {
+  initRedis(); // Non-blocking: allows server to start even if Redis is unavailable
+}
 
 // ================================
 // MIDDLEWARES
@@ -174,19 +177,27 @@ app.use("/api/sessions", sessionRoutes);
 // VECTOR STORE INIT (Non-blocking)
 // ================================
 // Initialize vector store in background to avoid blocking server startup
-initVectorStore()
-  .then(() => console.log("✅ Vector store initialized"))
-  .catch((error) =>
-    console.error("⚠️ Vector store initialization failed:", error.message),
-  );
+if (process.env.NODE_ENV !== "test") {
+  initVectorStore()
+    .then(() => console.log("✅ Vector store initialized"))
+    .catch((error) =>
+      console.error("⚠️ Vector store initialization failed:", error.message),
+    );
+}
 
 // ================================
 // START SERVER
 // ================================
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Allowed Origins: ${allowedOrigins.join(", ")}`);
-});
+let server;
+if (process.env.NODE_ENV !== "test") {
+  server = app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🌐 Allowed Origins: ${allowedOrigins.join(", ")}`);
+  });
+} else {
+  // In test mode, create server without listening
+  server = http.createServer(app);
+}
 
 // ================================
 // SOCKET.IO
@@ -202,7 +213,9 @@ const io = new Server(server, {
 app.set("io", io);
 
 meetingSocket(io);
-initAIWorker(app);
+if (process.env.NODE_ENV !== "test") {
+  initAIWorker(app);
+}
 
 // ================================
 // ERROR HANDLER
@@ -239,3 +252,5 @@ process.on("SIGINT", () => {
     process.exit(0);
   });
 });
+
+export { app, server };

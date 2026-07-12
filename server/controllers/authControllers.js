@@ -70,7 +70,7 @@ export const register = async (req, res) => {
       "Register",
     );
 
-    return res.json({ success: true, message: "Registration successful" });
+    return res.status(201).json({ success: true, message: "Registration successful" });
   } catch (error) {
     console.error("Register error:", error);
     res.json({ success: false, message: error.message });
