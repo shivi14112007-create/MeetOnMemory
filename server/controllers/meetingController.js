@@ -9,6 +9,7 @@ import {
   processStructuredMoM,
   detectResolutions,
 } from "../services/knowledgeGraphService.js";
+import { checkMeetingDecisionsAgainstPolicies } from "../services/policyComplianceService.js";
 import { createAndPushNotification } from "../services/notificationService.js";
 /**
  * Meeting Controller - Handles all meeting operations
@@ -656,7 +657,23 @@ ${textToSummarize}
       if (meetingToUpdate) {
         try {
           await detectResolutions(meetingToUpdate, mom);
-          await processStructuredMoM(meetingToUpdate, mom);
+          const kgResults = await processStructuredMoM(meetingToUpdate, mom);
+
+          // Policy compliance cross-reference — hooks in right after decisions
+          // are extracted/embedded by the knowledge graph pass. Kept in its
+          // own try/catch so a compliance-check failure never affects
+          // knowledge-graph processing that already succeeded above.
+          try {
+            await checkMeetingDecisionsAgainstPolicies(
+              meetingToUpdate,
+              kgResults?.decisions,
+            );
+          } catch (complianceError) {
+            console.error(
+              "⚠️ Policy compliance check failed (non-fatal):",
+              complianceError,
+            );
+          }
         } catch (kgError) {
           console.error(
             "⚠️ Knowledge graph processing failed (non-fatal):",

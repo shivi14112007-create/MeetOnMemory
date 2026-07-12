@@ -22,6 +22,7 @@ import geminiRoutes from "./routes/geminiRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import knowledgeRoutes from "./routes/knowledgeRoutes.js";
+import policyComplianceRoutes from "./routes/policyComplianceRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 
 import { initVectorStore } from "./utils/embeddingUtils.js";
@@ -165,6 +166,7 @@ app.use("/api/gemini", geminiRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/knowledge", knowledgeRoutes);
+app.use("/api/policy-compliance", policyComplianceRoutes);
 app.use("/api/sessions", sessionRoutes);
 
 // ================================
