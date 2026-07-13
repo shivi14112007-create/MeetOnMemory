@@ -270,15 +270,6 @@ const Navbar = () => {
   };
 
   const appLinks = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Meetings", href: "/meetings", icon: Calendar },
-    { label: "Tasks", href: "/tasks", icon: CheckSquare },
-    { label: "Compliance", href: "/policy-compliance", icon: ShieldAlert },
-    { label: "Calendar", href: "/calendar", icon: CalendarDays },
-    { label: "Team Members", href: "/team-members", icon: Users },
-    { label: "Organizations", href: "/organizations", icon: Building2, adminOnly: true },
-    { label: "AI Search", href: "/ai-search", icon: Search },
-  ];
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: { resource: "reports", action: "view" } },
     { label: "Meetings", href: "/meetings", icon: Calendar, permission: { resource: "meetings", action: "view" } },
     { label: "Tasks", href: "/tasks", icon: CheckSquare, permission: { resource: "tasks", action: "view" } },
@@ -288,10 +279,6 @@ const Navbar = () => {
     { label: "Organizations", href: "/organizations", icon: Building2, permission: { resource: "organizations", action: "view" } },
     { label: "AI Search", href: "/ai-search", icon: Search, permission: { resource: "ai_search", action: "search" } },
   ].filter(link => !link.permission || hasPermission(link.permission.resource, link.permission.action));
-
-  const visibleLinks = appLinks.filter(
-    (link) => !link.adminOnly || userData?.role === "admin"
-  );
 
   return (
     <header
@@ -356,7 +343,7 @@ const Navbar = () => {
               className="hidden md:flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 p-1 rounded-2xl"
               aria-label="Application navigation"
             >
-              {visibleLinks.map((link) => {
+              {appLinks.map((link) => {
                 const Icon = link.icon;
                 const active = isTabActive(link.href);
                 return (
@@ -695,7 +682,7 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {visibleLinks.map((link) => {
+              {appLinks.map((link) => {
                 const Icon = link.icon;
                 const active = isTabActive(link.href);
                 return (

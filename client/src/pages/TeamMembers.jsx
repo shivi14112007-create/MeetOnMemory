@@ -30,6 +30,7 @@ const ROLE_LABELS = {
 
 const TeamMembers = () => {
   const { userData } = useContext(AppContent);
+  const isAdmin = userData?.role === "admin";
 
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
