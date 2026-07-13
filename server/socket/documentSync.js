@@ -1,9 +1,12 @@
 import * as Y from "yjs";
 import jwt from "jsonwebtoken";
+import { createClient } from "redis";
 import {
   loadDocumentState,
   saveDocumentState,
 } from "../services/documentService.js";
+import Meeting from "../models/meetingModel.js";
+import User from "../models/userModel.js";
 
 // In-memory registry
 //     docRegistry[meetingId] = {
@@ -14,6 +17,67 @@ const docRegistry = new Map();
 
 // Debounce window in milliseconds before a DB write is triggered
 const SAVE_DEBOUNCE_MS = 5000;
+
+// Redis Pub/Sub Synchronization Setup for Horizontal Scaling
+const redisUri = process.env.REDIS_URI || process.env.REDIS_URL;
+let redisPub = null;
+let redisSub = null;
+const serverId = Math.random().toString(36).substring(7);
+let syncNamespace = null;
+
+if (redisUri) {
+  try {
+    redisPub = createClient({ url: redisUri });
+    redisSub = redisPub.duplicate();
+
+    redisPub.on("error", (err) =>
+      console.error("❌ [documentSync] Redis Pub Error:", err.message),
+    );
+    redisSub.on("error", (err) =>
+      console.error("❌ [documentSync] Redis Sub Error:", err.message),
+    );
+
+    await Promise.all([redisPub.connect(), redisSub.connect()]);
+    console.log("✅ [documentSync] Yjs Redis Pub/Sub sync enabled");
+
+    // Subscribe to global cross-server updates channel
+    await redisSub.subscribe("yjs-document-sync-updates", (message) => {
+      try {
+        const { meetingId, update: updateArray, sender } = JSON.parse(message);
+        if (sender === serverId) return; // Ignore own echo updates
+
+        const entry = docRegistry.get(meetingId);
+        if (entry) {
+          console.log(
+            `📡 [documentSync] Applying cross-server update for meeting: ${meetingId}`,
+          );
+          Y.applyUpdate(entry.ydoc, new Uint8Array(updateArray));
+
+          // Broadcast to local sockets on this instance
+          const roomName = `doc:${meetingId}`;
+          if (syncNamespace) {
+            syncNamespace.to(roomName).emit("sync-update", {
+              meetingId,
+              update: updateArray,
+            });
+          }
+        }
+      } catch (err) {
+        console.error(
+          "❌ [documentSync] Failed to process Redis sync update:",
+          err.message,
+        );
+      }
+    });
+  } catch (err) {
+    console.warn(
+      "⚠️  [documentSync] Redis pub/sub failed to initialize:",
+      err.message,
+    );
+    redisPub = null;
+    redisSub = null;
+  }
+}
 
 // JWT Cookie Auth helper
 const parseCookie = (str = "") =>
@@ -78,7 +142,7 @@ const getOrCreateDoc = async (meetingId) => {
   return ydoc;
 };
 
-// Clean up a document from memory when no clients remain
+// Clean up a document from memory when no clients remain (with race-safety checks)
 const cleanupDoc = async (meetingId, syncNs) => {
   const roomName = `doc:${meetingId}`;
   const room = syncNs.adapter.rooms.get(roomName);
@@ -95,18 +159,28 @@ const cleanupDoc = async (meetingId, syncNs) => {
       await saveDocumentState(meetingId, stateVector, plainText);
     }
 
-    docRegistry.delete(meetingId);
-    console.log(`[documentSync] Released Yjs doc from memory: ${meetingId}`);
+    // Re-check room size to ensure no new client joined while we were awaiting the DB write
+    const currentRoom = syncNs.adapter.rooms.get(roomName);
+    const currentClientCount = currentRoom ? currentRoom.size : 0;
+
+    if (currentClientCount === 0) {
+      docRegistry.delete(meetingId);
+      console.log(`[documentSync] Released Yjs doc from memory: ${meetingId}`);
+    } else {
+      console.log(
+        `[documentSync] Aborted release for ${meetingId} because client joined during save`,
+      );
+    }
   }
 };
 
 // Main export — registers /sync namespace on the Socket.io server
 export default (io) => {
   // Create a dedicated namespace for document synchronization
-  const syncNs = io.of("/sync");
+  syncNamespace = io.of("/sync");
 
   // Auth Middleware — validate JWT cookie on every connection
-  syncNs.use((socket, next) => {
+  syncNamespace.use((socket, next) => {
     try {
       const cookieHeader = socket.request.headers.cookie || "";
       const cookies = parseCookie(cookieHeader);
@@ -126,7 +200,7 @@ export default (io) => {
   });
 
   // Connection handler
-  syncNs.on("connection", (socket) => {
+  syncNamespace.on("connection", (socket) => {
     console.log(
       `[documentSync] Client connected: ${socket.id} | user: ${socket.userId}`,
     );
@@ -139,6 +213,61 @@ export default (io) => {
     socket.on("join-document", async ({ meetingId } = {}) => {
       if (!meetingId) {
         socket.emit("doc-error", { message: "meetingId is required" });
+        return;
+      }
+
+      // Authorization Check: Must be the creator, belong to the same organization, or be a listed participant.
+      try {
+        const meeting = await Meeting.findById(meetingId);
+        if (!meeting) {
+          socket.emit("doc-error", { message: "Meeting not found" });
+          return;
+        }
+
+        let isAuthorized = meeting.uploadedBy.toString() === socket.userId;
+
+        if (!isAuthorized) {
+          const user = await User.findById(socket.userId);
+          if (user) {
+            // Check organization match
+            if (
+              meeting.organization &&
+              user.organization &&
+              meeting.organization.toString() === user.organization.toString()
+            ) {
+              isAuthorized = true;
+            }
+            // Check participants list (by email or name)
+            if (
+              !isAuthorized &&
+              meeting.participants &&
+              meeting.participants.length > 0
+            ) {
+              const matchedParticipant = meeting.participants.find(
+                (p) =>
+                  p.email &&
+                  p.email.toLowerCase() === user.email.toLowerCase(),
+              );
+              if (matchedParticipant) {
+                isAuthorized = true;
+              }
+            }
+          }
+        }
+
+        if (!isAuthorized) {
+          socket.emit("doc-error", {
+            message:
+              "Unauthorized: You do not have access to this meeting's collaborative notes",
+          });
+          return;
+        }
+      } catch (authErr) {
+        console.error(
+          "[documentSync] Auth verification failed:",
+          authErr.message,
+        );
+        socket.emit("doc-error", { message: "Internal authentication error" });
         return;
       }
 
@@ -169,8 +298,9 @@ export default (io) => {
     // Client sends: { meetingId: string, update: Uint8Array }
     // Server:
     //       1. Applies update to the server-side Yjs doc (conflict-free)
-    //       2. Broadcasts the update to all OTHER clients in the room
-    //       3. Schedules a debounced DB save
+    //       2. Broadcasts the update to all OTHER clients in the room on this server
+    //       3. Publishes update to Redis to sync other servers
+    //       4. Schedules a debounced DB save
     socket.on("sync-update", ({ meetingId, update } = {}) => {
       if (!meetingId || !update) return;
 
@@ -186,9 +316,25 @@ export default (io) => {
         // Apply the client's CRDT update to our authoritative server doc
         Y.applyUpdate(entry.ydoc, new Uint8Array(update));
 
-        // Broadcast to everyone else in the same document room
+        // Broadcast to everyone else in the same document room on this server
         const roomName = `doc:${meetingId}`;
         socket.to(roomName).emit("sync-update", { meetingId, update });
+
+        // Push to Redis Pub/Sub for horizontal scaling/multi-server sync
+        if (redisPub) {
+          redisPub
+            .publish(
+              "yjs-document-sync-updates",
+              JSON.stringify({
+                meetingId,
+                update: Array.from(update),
+                sender: serverId,
+              }),
+            )
+            .catch((err) =>
+              console.error("❌ Redis Publish Error:", err.message),
+            );
+        }
 
         // Schedule a debounced save to MongoDB
         scheduleSave(meetingId, entry.ydoc);
@@ -217,11 +363,11 @@ export default (io) => {
       console.log(`[documentSync] Client disconnected: ${socket.id}`);
       if (currentMeetingId) {
         // Small delay to allow the socket to fully leave the room
-        setTimeout(() => cleanupDoc(currentMeetingId, syncNs), 500);
+        setTimeout(() => cleanupDoc(currentMeetingId, syncNamespace), 500);
       }
     });
   });
 
   console.log("[documentSync] /sync namespace registered");
-  return syncNs;
+  return syncNamespace;
 };

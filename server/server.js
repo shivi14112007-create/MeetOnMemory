@@ -205,6 +205,13 @@ app.set("io", io);
       const pubClient = createClient({ url: redisUri });
       const subClient = pubClient.duplicate();
 
+      pubClient.on("error", (err) => {
+        console.error("❌ Redis PubClient Error:", err.message);
+      });
+      subClient.on("error", (err) => {
+        console.error("❌ Redis SubClient Error:", err.message);
+      });
+
       await Promise.all([pubClient.connect(), subClient.connect()]);
       io.adapter(createAdapter(pubClient, subClient));
       console.log(

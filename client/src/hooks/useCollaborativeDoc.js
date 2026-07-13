@@ -123,14 +123,42 @@ const useCollaborativeDoc = (meetingId, backendUrl) => {
     const ydoc = ydocRef.current;
     if (!ytext || !ydoc) return;
 
-    // Transact: replace full content with new text (simple but effective for textarea)
     ydoc.transact(() => {
-      const currentText = ytext.toString();
-      if (currentText === newText) return;
+      const oldText = ytext.toString();
+      if (oldText === newText) return;
 
-      // Delete all and re-insert (Yjs CRDTs handle this safely)
-      ytext.delete(0, currentText.length);
-      ytext.insert(0, newText);
+      // Find common prefix to preserve unchanged starting characters
+      let start = 0;
+      while (
+        start < oldText.length &&
+        start < newText.length &&
+        oldText[start] === newText[start]
+      ) {
+        start++;
+      }
+
+      // Find common suffix to preserve unchanged ending characters
+      let oldEnd = oldText.length;
+      let newEnd = newText.length;
+      while (
+        oldEnd > start &&
+        newEnd > start &&
+        oldText[oldEnd - 1] === newText[newEnd - 1]
+      ) {
+        oldEnd--;
+        newEnd--;
+      }
+
+      const deleteCount = oldEnd - start;
+      const insertText = newText.slice(start, newEnd);
+
+      // Perform minimal Yjs updates instead of replacing the entire document
+      if (deleteCount > 0) {
+        ytext.delete(start, deleteCount);
+      }
+      if (insertText.length > 0) {
+        ytext.insert(start, insertText);
+      }
     });
   }, []);
 
