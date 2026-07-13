@@ -2,6 +2,7 @@ import { Queue, Worker } from "bullmq";
 import Redis from "ioredis";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
+import eventBus from "./eventBus.js";
 import Meeting from "../models/meetingModel.js";
 import { indexMeeting } from "../utils/embeddingUtils.js";
 import {
@@ -271,6 +272,16 @@ ${textToSummarize}
         }
 
         console.log("✅ MoM saved to database");
+
+        // Trigger internal events for webhooks
+        try {
+          if (!meetingId) {
+            eventBus.emit("meeting.created", meetingToUpdate);
+          }
+          eventBus.emit("mom.generated", meetingToUpdate);
+        } catch (evtErr) {
+          console.error("⚠️ Failed to emit webhook events from queue:", evtErr.message);
+        }
 
         if (meetingToUpdate) {
           try {

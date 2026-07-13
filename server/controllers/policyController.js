@@ -5,6 +5,7 @@ import axios from "axios";
 import { createRequire } from "module";
 import Policy from "../models/policyModel.js";
 import PolicyCompliance from "../models/policyComplianceModel.js";
+import eventBus from "../services/eventBus.js";
 import {
   indexPolicy,
   removePolicyFromIndex,
@@ -207,6 +208,13 @@ export const uploadPolicy = async (req, res) => {
       existing.status = "ready";
       await existing.save();
 
+      // Trigger internal event for webhooks
+      try {
+        eventBus.emit("policy.updated", existing);
+      } catch (evtErr) {
+        console.error("⚠️ Failed to emit policy.updated event:", evtErr.message);
+      }
+
       // Re-populate for response
       await existing.populate("uploadedBy", "name email");
       await existing.populate("lastEditedBy", "name email");
@@ -243,6 +251,13 @@ export const uploadPolicy = async (req, res) => {
       organization: req.user.organization || null,
       status: "ready",
     });
+
+    // Trigger internal event for webhooks
+    try {
+      eventBus.emit("policy.updated", policy);
+    } catch (evtErr) {
+      console.error("⚠️ Failed to emit policy.updated event:", evtErr.message);
+    }
 
     await policy.populate("uploadedBy", "name email");
     await policy.populate("lastEditedBy", "name email");
@@ -321,6 +336,13 @@ export const analyzePolicy = async (req, res) => {
     policy.keywords = aiData.keywords;
     policy.status = "ready";
     await policy.save();
+
+    // Trigger internal event for webhooks
+    try {
+      eventBus.emit("policy.updated", policy);
+    } catch (evtErr) {
+      console.error("⚠️ Failed to emit policy.updated event:", evtErr.message);
+    }
 
     // Summary/key_changes content changed — refresh the vector and any
     // existing compliance classifications built on the old text.
