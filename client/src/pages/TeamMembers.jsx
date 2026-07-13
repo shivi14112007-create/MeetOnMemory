@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
-import AppContent from "../context/AppContent";
+import React, { useState, useEffect, useCallback } from "react";
 import Navbar from "../components/Navbar.jsx";
 import { organizationApi } from "../services";
 import {
@@ -29,8 +28,6 @@ const ROLE_LABELS = {
 };
 
 const TeamMembers = () => {
-  const { userData } = useContext(AppContent);
-
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [loading, setLoading] = useState(true);
