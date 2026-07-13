@@ -33,8 +33,8 @@ const OrganizationHub = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
-      <div className="flex-grow container mx-auto px-4 py-8">
-        <OrganizationHeader />
+      <div className="flex-grow flex flex-col container mx-auto px-4 pt-24 pb-12 sm:pt-28 sm:pb-16">
+        <OrganizationHeader showActions={organizations.length > 0} />
 
         {loading ? (
           <OrganizationGrid organizations={[]} loading={true} />

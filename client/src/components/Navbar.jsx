@@ -290,19 +290,19 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div
-            className="flex items-center gap-3 cursor-pointer group focus-visible:outline-none"
+            className="flex items-center gap-1.5 sm:gap-3 cursor-pointer group focus-visible:outline-none shrink-0 min-w-0"
             onClick={() => navigate("/")}
             role="link"
             aria-label="MeetOnMemory Home"
             tabIndex={0}
             onKeyDown={(e) => e.key === "Enter" && navigate("/")}
           >
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center shrink-0">
               {/* Clean Extra Large Native Option A Infinity Symbol with scale only */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 100 100"
-                className="relative w-16 h-16 transition-transform duration-300 group-hover:scale-105"
+                className="relative w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 transition-transform duration-300 group-hover:scale-105"
               >
                 <defs>
                   <linearGradient
@@ -329,7 +329,7 @@ const Navbar = () => {
               </svg>
             </div>
             {/* Clean, Consistent Text Layout (Hover effects removed) */}
-            <span className="font-bold text-2xl text-gray-900 dark:text-gray-100 tracking-tight">
+            <span className="font-bold text-lg sm:text-2xl text-gray-900 dark:text-gray-100 tracking-tight shrink-0">
               MeetOn
               <span className="text-blue-600 dark:text-blue-400">Memory</span>
             </span>
@@ -385,7 +385,7 @@ const Navbar = () => {
           )}
 
           {/* Right Side Controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
