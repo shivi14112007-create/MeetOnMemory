@@ -176,5 +176,5 @@ export const getRolePermissions = (role) => {
  * @returns {boolean}
  */
 export const isValidRole = (role) => {
-  return ROLE_HIERARCHY.hasOwnProperty(role);
+  return Object.prototype.hasOwnProperty.call(ROLE_HIERARCHY, role);
 };

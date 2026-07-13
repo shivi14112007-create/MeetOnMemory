@@ -22,5 +22,3 @@ export const useRBAC = () => {
   }
   return context;
 };
-
-export default RBACContext;

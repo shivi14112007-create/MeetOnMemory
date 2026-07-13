@@ -9,7 +9,10 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.get("/data", userAuth, apiLimiter, requirePermission("settings", "view"), getUserData);
+// Apply rate limiting to all routes
+userRouter.use(apiLimiter);
+
+userRouter.get("/data", userAuth, requirePermission("settings", "view"), getUserData);
 userRouter.put("/update", userAuth, writeLimiter, requirePermission("settings", "edit"), updateUserProfile);
 
 export default userRouter;
