@@ -95,7 +95,6 @@ const BrowseOrganizations = () => {
 
   // Initial load
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchOrganizations(1, searchQuery, sortBy, filter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

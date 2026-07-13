@@ -88,8 +88,13 @@ export const createOrJoinOrganization = async (req, res) => {
       }
     } else {
       // --- Create new organization ---
+      const baseSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      const uniqueSlug = baseSlug ? `${baseSlug}-${Math.random().toString(36).substring(2, 8)}` : `org-${Math.random().toString(36).substring(2, 8)}`;
+      
       organization = await Organization.create({
         name: orgName,
+        slug: uniqueSlug,
+        owner: userId,
         createdBy: userId,
         members: [userId],
       });

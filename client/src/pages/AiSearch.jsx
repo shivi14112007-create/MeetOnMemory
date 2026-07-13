@@ -1,11 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar.jsx";
-import AppContent from "../context/AppContent.js";
 import SearchBar from "../components/ai-search/SearchBar.jsx";
 import SearchFilters from "../components/ai-search/SearchFilters.jsx";
 import SearchResultCard from "../components/ai-search/SearchResultCard.jsx";
 import SearchSkeleton from "../components/ai-search/SearchSkeleton.jsx";
 import SearchEmptyState from "../components/ai-search/SearchEmptyState.jsx";
+import { apiClient } from "../services";
 
 // Modal Component for showing full details
 const ResultModal = ({ result, onClose }) => {
@@ -97,7 +97,6 @@ const ResultModal = ({ result, onClose }) => {
 };
 
 const AiSearch = () => {
-  const { backendUrl } = useContext(AppContent);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -123,18 +122,8 @@ const AiSearch = () => {
     setHasSearched(true);
 
     try {
-      const res = await fetch(`${backendUrl}/api/ai-search`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, filters }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Server error: ${res.status}`);
-      }
-
-      const data = await res.json();
+      const res = await apiClient.post("/api/ai-search", { query, filters });
+      const data = res.data;
 
       let sortedResults = data.results || [];
 
@@ -149,11 +138,6 @@ const AiSearch = () => {
       }
 
       setResults(sortedResults);
-      if (sortedResults.length === 0) {
-        setError(
-          "No matching results found. Try a different query or adjust your filters.",
-        );
-      }
     } catch (err) {
       console.error("❌ Search error:", err);
 
