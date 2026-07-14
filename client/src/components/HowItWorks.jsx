@@ -286,7 +286,7 @@ const HowItWorks = () => {
         generatingReport: false,
       }));
     }
-  }, [activeStep, resetNonce]);
+  }, [activeStep, resetNonce, i18n.language]);
 
   // Restart simulation helper
   const restartSimulation = () => {
