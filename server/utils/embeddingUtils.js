@@ -66,7 +66,7 @@ export const embedText = async (text) => {
     const model = await getEmbedder();
     const output = await model(text, { pooling: "mean", normalize: true });
     let arr = Array.from(output.data);
-    
+
     // Pinecone index is 1024 dimensions, but MiniLM outputs 384.
     // Pad with zeros to match the index dimension. Cosine similarity will still work correctly.
     if (arr.length < 1024) {
@@ -76,7 +76,7 @@ export const embedText = async (text) => {
       }
       arr = padded;
     }
-    
+
     return arr;
   } catch (error) {
     console.error("❌ Local embedding creation failed:", error);

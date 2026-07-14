@@ -22,16 +22,18 @@ import {
 const router = express.Router();
 
 // Apply rate limiting to all routes
-router.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  message: {
-    success: false,
-    message: "Too many requests, please try again after 15 minutes.",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-}));
+router.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+    message: {
+      success: false,
+      message: "Too many requests, please try again after 15 minutes.",
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+  }),
+);
 
 // ──────────────────────────────────────────────
 // Rate Limiters

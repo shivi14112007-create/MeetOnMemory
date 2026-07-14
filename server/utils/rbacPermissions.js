@@ -91,6 +91,10 @@ export const PERMISSIONS = {
     view: ["owner", "admin", "moderator", "member", "guest"],
     manage: ["owner", "admin"],
   },
+  // Audit Logs permissions
+  audit_logs: {
+    view: ["owner", "admin"],
+  },
 };
 
 /**
@@ -159,14 +163,14 @@ export const hasHigherOrEqualRole = (role1, role2) => {
  */
 export const getRolePermissions = (role) => {
   const permissions = {};
-  
+
   Object.keys(PERMISSIONS).forEach((resource) => {
     permissions[resource] = {};
     Object.keys(PERMISSIONS[resource]).forEach((action) => {
       permissions[resource][action] = hasPermission(role, resource, action);
     });
   });
-  
+
   return permissions;
 };
 

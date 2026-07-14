@@ -70,7 +70,9 @@ export const register = async (req, res) => {
       "Register",
     );
 
-    return res.status(201).json({ success: true, message: "Registration successful" });
+    return res
+      .status(201)
+      .json({ success: true, message: "Registration successful" });
   } catch (error) {
     console.error("Register error:", error);
     res.json({ success: false, message: error.message });
@@ -295,14 +297,20 @@ export const googleCalendarCallback = async (req, res) => {
   const { code } = req.query;
   try {
     const tokens = await getTokens(code);
-    
+
     const token = req.cookies?.token;
-    if (!token) return res.status(401).json({ success: false, message: "Not authenticated" });
+    if (!token)
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
     const user = await userModel.findById(userId);
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
     user.googleAccessToken = tokens.access_token;
     if (tokens.refresh_token) {

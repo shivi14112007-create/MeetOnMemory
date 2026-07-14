@@ -30,8 +30,6 @@ afterEach(async () => {
   if (mongoose.connection.readyState !== 1 /* CONNECTED */) return;
 
   await Promise.all(
-    Object.values(mongoose.connection.collections).map((c) =>
-      c.deleteMany({}),
-    ),
+    Object.values(mongoose.connection.collections).map((c) => c.deleteMany({})),
   );
 });

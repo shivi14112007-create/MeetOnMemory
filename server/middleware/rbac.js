@@ -99,7 +99,7 @@ export const requireAnyPermission = (resource, actions) => {
     }
 
     const hasAny = actions.some((action) =>
-      hasPermission(req.user.role, resource, action)
+      hasPermission(req.user.role, resource, action),
     );
 
     if (!hasAny) {
