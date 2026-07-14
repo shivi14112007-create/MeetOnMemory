@@ -134,7 +134,10 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/organizations/:slug" element={<PublicOrganizationProfile />} />
+          <Route
+            path="/organizations/:slug"
+            element={<PublicOrganizationProfile />}
+          />
 
           {/* === Protected Routes (Require login) === */}
           <Route

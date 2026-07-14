@@ -427,7 +427,9 @@ const Tasks = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 fade-in-up">
             <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
-            <p className="text-slate-600 dark:text-slate-400">Loading tasks...</p>
+            <p className="text-slate-600 dark:text-slate-400">
+              Loading tasks...
+            </p>
           </div>
         ) : error ? (
           <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center fade-in-up">
@@ -576,7 +578,9 @@ const Tasks = () => {
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
                       {selectedTask.title}
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400">{selectedTask.description}</p>
+                    <p className="text-slate-600 dark:text-slate-400">
+                      {selectedTask.description}
+                    </p>
                   </div>
 
                   {/* Status and Priority */}

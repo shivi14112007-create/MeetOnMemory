@@ -270,15 +270,59 @@ const Navbar = () => {
   };
 
   const appLinks = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: { resource: "reports", action: "view" } },
-    { label: "Meetings", href: "/meetings", icon: Calendar, permission: { resource: "meetings", action: "view" } },
-    { label: "Tasks", href: "/tasks", icon: CheckSquare, permission: { resource: "tasks", action: "view" } },
-    { label: "Compliance", href: "/policy-compliance", icon: ShieldAlert, permission: { resource: "policies", action: "view" } },
-    { label: "Calendar", href: "/calendar", icon: CalendarDays, permission: { resource: "calendar", action: "view" } },
-    { label: "Team Members", href: "/team-members", icon: Users, permission: { resource: "team_members", action: "view" } },
-    { label: "Organizations", href: "/organizations", icon: Building2, permission: { resource: "organizations", action: "view" } },
-    { label: "AI Search", href: "/ai-search", icon: Search, permission: { resource: "ai_search", action: "search" } },
-  ].filter(link => !link.permission || hasPermission(link.permission.resource, link.permission.action));
+    {
+      label: "Dashboard",
+      href: "/dashboard",
+      icon: LayoutDashboard,
+      permission: { resource: "reports", action: "view" },
+    },
+    {
+      label: "Meetings",
+      href: "/meetings",
+      icon: Calendar,
+      permission: { resource: "meetings", action: "view" },
+    },
+    {
+      label: "Tasks",
+      href: "/tasks",
+      icon: CheckSquare,
+      permission: { resource: "tasks", action: "view" },
+    },
+    {
+      label: "Compliance",
+      href: "/policy-compliance",
+      icon: ShieldAlert,
+      permission: { resource: "policies", action: "view" },
+    },
+    {
+      label: "Calendar",
+      href: "/calendar",
+      icon: CalendarDays,
+      permission: { resource: "calendar", action: "view" },
+    },
+    {
+      label: "Team Members",
+      href: "/team-members",
+      icon: Users,
+      permission: { resource: "team_members", action: "view" },
+    },
+    {
+      label: "Organizations",
+      href: "/organizations",
+      icon: Building2,
+      permission: { resource: "organizations", action: "view" },
+    },
+    {
+      label: "AI Search",
+      href: "/ai-search",
+      icon: Search,
+      permission: { resource: "ai_search", action: "search" },
+    },
+  ].filter(
+    (link) =>
+      !link.permission ||
+      hasPermission(link.permission.resource, link.permission.action),
+  );
 
   return (
     <header

@@ -68,15 +68,15 @@ export const slackInstall = async (req, res, next) => {
     }
 
     // organizationId can come from an authenticated request (query or user object)
-    const organizationId =
+    let organizationId =
       req.query.organizationId ||
       req.user?.organization?.toString() ||
       "";
 
-    if (!organizationId) {
+    if (typeof organizationId !== "string" || !/^[0-9a-fA-F]{24}$/.test(organizationId)) {
       return res.status(400).json({
         success: false,
-        message: "organizationId is required to initiate Slack installation.",
+        message: "Invalid or missing organizationId format.",
       });
     }
 
@@ -112,17 +112,22 @@ export const slackOAuthRedirect = async (req, res, next) => {
 
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
+    if (organizationId && (typeof organizationId !== "string" || !/^[0-9a-fA-F]{24}$/.test(organizationId))) {
+      return res.status(400).json({ success: false, message: "Invalid organizationId format." });
+    }
+
     // Handle user-denied or Slack error cases
     if (slackError) {
+      const sanitizedError = encodeURIComponent(String(slackError));
       return res.redirect(
-        `${frontendUrl}/organizations/${organizationId}?slackInstall=error&reason=${slackError}`
+        `${frontendUrl}/organizations/${organizationId}?slackInstall=error&reason=${sanitizedError}`
       );
     }
 
-    if (!code) {
+    if (!code || typeof code !== "string") {
       return res
         .status(400)
-        .json({ success: false, message: "Missing OAuth code from Slack." });
+        .json({ success: false, message: "Missing or invalid OAuth code from Slack." });
     }
 
     if (!organizationId) {
@@ -198,9 +203,10 @@ export const handleSlackEvents = async (req, res, next) => {
     // Slack sends slash commands as application/x-www-form-urlencoded POST.
     // req.body will be parsed because express.urlencoded is active.
     if (body?.command === "/mom-create") {
-      const { title, tags } = parseSlashCommandText(body.text);
-      const teamId = body.team_id;
-      const userName = body.user_name || "someone";
+      const text = typeof body.text === "string" ? body.text : "";
+      const { title, tags } = parseSlashCommandText(text);
+      const teamId = typeof body.team_id === "string" ? body.team_id : "";
+      const userName = typeof body.user_name === "string" ? body.user_name : "someone";
 
       if (!teamId) {
         return res.status(200).json({
@@ -210,8 +216,9 @@ export const handleSlackEvents = async (req, res, next) => {
       }
 
       // Find the organization linked to this Slack workspace
+      // Using string coercion on teamId to prevent NoSQL query injection
       const org = await Organization.findOne({
-        "slackIntegration.teamId": teamId,
+        "slackIntegration.teamId": String(teamId),
       }).lean();
 
       if (!org) {

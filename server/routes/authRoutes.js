@@ -46,7 +46,11 @@ router.get("/csrf", (req, res) => {
     res.json({ success: true, csrfToken });
   } catch (error) {
     // CSRF is bypassed in development, return success without token
-    res.json({ success: true, csrfToken: null, message: "CSRF bypassed in development" });
+    res.json({
+      success: true,
+      csrfToken: null,
+      message: "CSRF bypassed in development",
+    });
   }
 });
 

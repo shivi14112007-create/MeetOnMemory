@@ -66,7 +66,6 @@ invitationSchema.index({ expiresAt: 1 });
 invitationSchema.index({ createdAt: -1 });
 
 const Invitation =
-  mongoose.models.Invitation ||
-  mongoose.model("Invitation", invitationSchema);
+  mongoose.models.Invitation || mongoose.model("Invitation", invitationSchema);
 
 export default Invitation;

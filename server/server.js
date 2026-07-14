@@ -38,7 +38,7 @@ import documentSync from "./socket/documentSync.js";
 import { initRedis, getRedisClient } from "./services/redisService.js";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
-import { initAIWorker } from "./services/queueService.js";
+import { initAIWorker, initDataExportWorker } from "./services/queueService.js";
 import { initWebhookWorker } from "./services/webhookDispatcherService.js";
 import { globalLimiter } from "./middleware/rateLimiter.js";
 import errorHandler from "./middleware/errorHandler.js";
@@ -112,7 +112,13 @@ app.use((req, res, next) => {
   // Slack cannot send CSRF tokens — exclude all Slack endpoints
   const isSlackRoute = req.path.startsWith("/api/slack");
 
-  if (isSafeMethod || isAuthRoute || isSyncPath || isSlackRoute || process.env.NODE_ENV === "test") {
+  if (
+    isSafeMethod ||
+    isAuthRoute ||
+    isSyncPath ||
+    isSlackRoute ||
+    process.env.NODE_ENV === "test"
+  ) {
     return next();
   }
   return csrfProtection(req, res, next);
@@ -224,6 +230,7 @@ meetingSocket(io);
 documentSync(io);
 if (process.env.NODE_ENV !== "test") {
   initAIWorker(app);
+  initDataExportWorker(app);
   initWebhookWorker();
 }
 

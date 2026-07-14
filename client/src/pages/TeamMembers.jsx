@@ -18,8 +18,10 @@ import {
 import { toast } from "react-toastify";
 
 const ROLE_STYLES = {
-  admin: "bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-800",
-  member: "bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-800",
+  admin:
+    "bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-800",
+  member:
+    "bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-800",
 };
 
 const ROLE_LABELS = {
@@ -340,7 +342,9 @@ const TeamMembers = () => {
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                   {selectedMember.name || "Unknown"}
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{selectedMember.email}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {selectedMember.email}
+                </p>
               </div>
 
               {/* Details */}

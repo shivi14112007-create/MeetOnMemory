@@ -3,7 +3,7 @@ import Organization from "../models/organizationModel.js";
 import userModel from "../models/userModel.js";
 import { createAndPushNotification } from "../services/notificationService.js";
 import mongoose from "mongoose";
-
+import AuditService from "../services/AuditService.js";
 /**
  * Escape special regex characters to prevent ReDoS attacks
  */
@@ -88,9 +88,14 @@ export const createOrJoinOrganization = async (req, res) => {
       }
     } else {
       // --- Create new organization ---
-      const baseSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-      const uniqueSlug = baseSlug ? `${baseSlug}-${Math.random().toString(36).substring(2, 8)}` : `org-${Math.random().toString(36).substring(2, 8)}`;
-      
+      const baseSlug = orgName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+      const uniqueSlug = baseSlug
+        ? `${baseSlug}-${Math.random().toString(36).substring(2, 8)}`
+        : `org-${Math.random().toString(36).substring(2, 8)}`;
+
       organization = await Organization.create({
         name: orgName,
         slug: uniqueSlug,
@@ -103,6 +108,16 @@ export const createOrJoinOrganization = async (req, res) => {
         role: "admin",
         organization: organization._id,
         hasCompletedOnboarding: true,
+      });
+
+      // Log the creation
+      AuditService.logAction({
+        actorId: userId,
+        action: "ORGANIZATION_CREATED",
+        entity: "Organization",
+        entityId: organization._id,
+        organizationId: organization._id,
+        details: { name: orgName, slug: uniqueSlug },
       });
 
       message = "Organization created successfully!";
@@ -290,12 +305,10 @@ export const selectOrganization = async (req, res) => {
     );
 
     if (!isMember) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "You are not a member of this organization.",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "You are not a member of this organization.",
+      });
     }
 
     // Update user's selected organization

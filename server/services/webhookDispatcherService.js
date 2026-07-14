@@ -48,14 +48,18 @@ const generateSignature = (payload, secret) => {
 export const performDispatch = async (webhookId, payload) => {
   const webhook = await Webhook.findById(webhookId).select("+secret");
   if (!webhook || !webhook.isActive) {
-    console.log(`⚠️ Webhook subscription ${webhookId} not found or inactive. Skipping.`);
+    console.log(
+      `⚠️ Webhook subscription ${webhookId} not found or inactive. Skipping.`,
+    );
     return;
   }
 
   const signature = generateSignature(payload, webhook.secret);
 
   try {
-    console.log(`📡 Sending webhook event '${payload.event}' to ${webhook.targetUrl}...`);
+    console.log(
+      `📡 Sending webhook event '${payload.event}' to ${webhook.targetUrl}...`,
+    );
     const response = await axios.post(webhook.targetUrl, payload, {
       headers: {
         "Content-Type": "application/json",
@@ -64,13 +68,17 @@ export const performDispatch = async (webhookId, payload) => {
       timeout: 10000, // 10 second timeout
     });
 
-    console.log(`✅ Webhook event '${payload.event}' successfully sent to ${webhook.targetUrl}. Status: ${response.status}`);
+    console.log(
+      `✅ Webhook event '${payload.event}' successfully sent to ${webhook.targetUrl}. Status: ${response.status}`,
+    );
   } catch (error) {
     const errorMsg = error.response
       ? `Status Code: ${error.response.status}`
       : error.message;
-    console.error(`❌ Webhook dispatch failed for ${webhook.targetUrl}: ${errorMsg}`);
-    
+    console.error(
+      `❌ Webhook dispatch failed for ${webhook.targetUrl}: ${errorMsg}`,
+    );
+
     // Throwing error allows BullMQ to retry the job
     throw new Error(`Webhook dispatch failed: ${errorMsg}`);
   }
@@ -117,12 +125,15 @@ export const dispatchWebhookEvent = async (organizationId, event, data) => {
               type: "exponential",
               delay: 2000, // 2s initial delay
             },
-          }
+          },
         );
       } else {
         // Fallback: Synchronous dispatch in local/dev environment without Redis
         performDispatch(webhook._id, payload).catch((err) => {
-          console.error("⚠️ Local webhook dispatch sync fallback failed:", err.message);
+          console.error(
+            "⚠️ Local webhook dispatch sync fallback failed:",
+            err.message,
+          );
         });
       }
     }
@@ -136,7 +147,9 @@ export const dispatchWebhookEvent = async (organizationId, event, data) => {
  */
 export const initWebhookWorker = () => {
   if (!connection) {
-    console.warn("⚠️ Redis not configured. Webhook background worker will not start (falling back to sync dispatch).");
+    console.warn(
+      "⚠️ Redis not configured. Webhook background worker will not start (falling back to sync dispatch).",
+    );
     return;
   }
 
@@ -146,7 +159,7 @@ export const initWebhookWorker = () => {
       const { webhookId, payload } = job.data;
       await performDispatch(webhookId, payload);
     },
-    { connection, concurrency: 10 }
+    { connection, concurrency: 10 },
   );
 
   worker.on("completed", (job) => {
@@ -154,10 +167,15 @@ export const initWebhookWorker = () => {
   });
 
   worker.on("failed", (job, err) => {
-    console.error(`❌ Webhook job ${job.id} failed after retries:`, err.message);
+    console.error(
+      `❌ Webhook job ${job.id} failed after retries:`,
+      err.message,
+    );
   });
 
-  console.log("✅ Webhook Worker initialized and listening to webhook-dispatches queue");
+  console.log(
+    "✅ Webhook Worker initialized and listening to webhook-dispatches queue",
+  );
 };
 
 // ─────────────────────────────────────────────────────────────
