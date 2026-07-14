@@ -14,7 +14,7 @@ import eventBus from "../services/eventBus.js";
 jest.mock("../config/nodeMailer.js", () => ({
   sendMail: jest.fn(),
   __esModule: true,
-  default: { sendMail: jest.fn() }
+  default: { sendMail: jest.fn() },
 }));
 
 // Import dispatcher to register eventBus listeners and access the queue
@@ -24,13 +24,17 @@ import * as dispatcher from "../services/webhookDispatcherService.js";
 let axiosSpy;
 let queueSpy;
 beforeAll(() => {
-  axiosSpy = jest.spyOn(axios, "post").mockResolvedValue({ status: 200, data: {} });
-  
+  axiosSpy = jest
+    .spyOn(axios, "post")
+    .mockResolvedValue({ status: 200, data: {} });
+
   if (dispatcher.webhookQueue) {
-    queueSpy = jest.spyOn(dispatcher.webhookQueue, "add").mockImplementation(async (name, jobData) => {
-      // Bypass Redis and execute synchronously
-      await dispatcher.performDispatch(jobData.webhookId, jobData.payload);
-    });
+    queueSpy = jest
+      .spyOn(dispatcher.webhookQueue, "add")
+      .mockImplementation(async (name, jobData) => {
+        // Bypass Redis and execute synchronously
+        await dispatcher.performDispatch(jobData.webhookId, jobData.payload);
+      });
   }
 });
 
@@ -61,7 +65,10 @@ describe("Webhook Endpoints & Dispatcher", () => {
       password: "password123",
       organization: organization._id,
     });
-    userToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "fallback_secret");
+    userToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || "fallback_secret",
+    );
 
     // Create admin user (owner of organization)
     adminUser = await User.create({
@@ -70,7 +77,10 @@ describe("Webhook Endpoints & Dispatcher", () => {
       password: "password123",
       organization: organization._id,
     });
-    adminToken = jwt.sign({ id: adminUser._id }, process.env.JWT_SECRET || "fallback_secret");
+    adminToken = jwt.sign(
+      { id: adminUser._id },
+      process.env.JWT_SECRET || "fallback_secret",
+    );
 
     // Update organization owner to the adminUser
     organization.owner = adminUser._id;

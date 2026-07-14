@@ -3,8 +3,6 @@ import { jest } from "@jest/globals";
 import AuditService from "../services/AuditService.js";
 import AuditLog from "../models/auditLogModel.js";
 
-
-
 describe("AuditService", () => {
   let consoleWarnSpy;
   let consoleErrorSpy;
@@ -14,10 +12,12 @@ describe("AuditService", () => {
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
-    
+
     // Spy on the Mongoose model method
-    auditLogCreateSpy = jest.spyOn(AuditLog, "create").mockImplementation(() => {});
-    
+    auditLogCreateSpy = jest
+      .spyOn(AuditLog, "create")
+      .mockImplementation(() => {});
+
     // Spy on console.warn and console.error to keep test output clean and assert on them
     consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
@@ -34,7 +34,7 @@ describe("AuditService", () => {
     const actorId = new mongoose.Types.ObjectId().toString();
     const organizationId = new mongoose.Types.ObjectId().toString();
     const entityId = new mongoose.Types.ObjectId().toString();
-    
+
     auditLogCreateSpy.mockResolvedValueOnce({ _id: "mock-log-id" });
 
     const logData = {
@@ -79,7 +79,7 @@ describe("AuditService", () => {
     expect(auditLogCreateSpy).not.toHaveBeenCalled();
     expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Missing required fields")
+      expect.stringContaining("Missing required fields"),
     );
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
@@ -87,7 +87,7 @@ describe("AuditService", () => {
   it("should safely catch and log errors without crashing if the database operation fails", async () => {
     // Arrange
     const actorId = new mongoose.Types.ObjectId().toString();
-    
+
     const dbError = new Error("Database connection lost");
     auditLogCreateSpy.mockRejectedValueOnce(dbError);
 
@@ -107,7 +107,7 @@ describe("AuditService", () => {
     expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining("AuditService failed to write log"),
-      dbError
+      dbError,
     );
   });
 });

@@ -48,9 +48,7 @@ const UploadMeeting = () => {
         if (data && data.meetingId) {
           // If the completed meeting matches our current meeting, update UI
           setSummary(
-            data.summary ||
-              data.momText ||
-              JSON.stringify(data.mom || data)
+            data.summary || data.momText || JSON.stringify(data.mom || data),
           );
           toast.success("Minutes of Meeting created!");
           setIsSummarizing(false);
@@ -214,8 +212,13 @@ const UploadMeeting = () => {
 
       const res = await meetingApi.summarizeMeeting(payload);
 
-      if (res.status === 202 || (res.data?.success && res.data?.message?.includes("background"))) {
-        toast.info("Minutes generation started in the background. Please wait...");
+      if (
+        res.status === 202 ||
+        (res.data?.success && res.data?.message?.includes("background"))
+      ) {
+        toast.info(
+          "Minutes generation started in the background. Please wait...",
+        );
         // Keep isSummarizing true until socket event completes it
       } else if (res.data?.success) {
         setSummary(
@@ -313,7 +316,8 @@ const UploadMeeting = () => {
                     className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1.5"
                   >
                     <Calendar className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                    Meeting Date <span className="text-red-500 dark:text-red-400">*</span>
+                    Meeting Date{" "}
+                    <span className="text-red-500 dark:text-red-400">*</span>
                   </label>
                   <div className="relative">
                     <input

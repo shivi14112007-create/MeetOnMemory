@@ -88,9 +88,14 @@ export const createOrJoinOrganization = async (req, res) => {
       }
     } else {
       // --- Create new organization ---
-      const baseSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-      const uniqueSlug = baseSlug ? `${baseSlug}-${Math.random().toString(36).substring(2, 8)}` : `org-${Math.random().toString(36).substring(2, 8)}`;
-      
+      const baseSlug = orgName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+      const uniqueSlug = baseSlug
+        ? `${baseSlug}-${Math.random().toString(36).substring(2, 8)}`
+        : `org-${Math.random().toString(36).substring(2, 8)}`;
+
       organization = await Organization.create({
         name: orgName,
         slug: uniqueSlug,
@@ -300,12 +305,10 @@ export const selectOrganization = async (req, res) => {
     );
 
     if (!isMember) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "You are not a member of this organization.",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "You are not a member of this organization.",
+      });
     }
 
     // Update user's selected organization

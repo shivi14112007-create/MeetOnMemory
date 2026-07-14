@@ -159,14 +159,14 @@ export const hasHigherOrEqualRole = (role1, role2) => {
  */
 export const getRolePermissions = (role) => {
   const permissions = {};
-  
+
   Object.keys(PERMISSIONS).forEach((resource) => {
     permissions[resource] = {};
     Object.keys(PERMISSIONS[resource]).forEach((action) => {
       permissions[resource][action] = hasPermission(role, resource, action);
     });
   });
-  
+
   return permissions;
 };
 

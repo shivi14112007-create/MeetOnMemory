@@ -18,7 +18,7 @@ export const getOrganizationAuditLogs = async (req, res) => {
 
     // Action filter
     if (action) {
-      filter.action = action;
+      filter.action = String(action);
     }
 
     // Date range filter
@@ -50,6 +50,8 @@ export const getOrganizationAuditLogs = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error fetching audit logs:", error);
-    res.status(500).json({ success: false, message: "Server error fetching audit logs." });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error fetching audit logs." });
   }
 };

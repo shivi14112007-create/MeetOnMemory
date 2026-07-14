@@ -259,6 +259,7 @@ docker-compose up -d --build
 ```
 
 This will spin up all the necessary services.
+
 - The frontend will be available at `http://localhost:5173`
 - The backend will be available at `http://localhost:4000`
 

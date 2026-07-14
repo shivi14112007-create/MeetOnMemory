@@ -134,7 +134,7 @@ ${textToSummarize}
       } catch (gemErr) {
         console.error(
           "❌ Gemini API error, falling back to HuggingFace:",
-          gemErr.message
+          gemErr.message,
         );
 
         try {
@@ -150,7 +150,7 @@ ${textToSummarize}
                 "Content-Type": "application/json",
               },
               timeout: 120000,
-            }
+            },
           );
 
           const hfText =
@@ -201,19 +201,25 @@ ${textToSummarize}
 
         if (mom.agenda.length) {
           humanReadable += "📋 Agenda:\n";
-          mom.agenda.forEach((item, i) => (humanReadable += `${i + 1}. ${item}\n`));
+          mom.agenda.forEach(
+            (item, i) => (humanReadable += `${i + 1}. ${item}\n`),
+          );
           humanReadable += "\n";
         }
 
         if (mom.key_discussions.length) {
           humanReadable += "💬 Key Discussions:\n";
-          mom.key_discussions.forEach((d, i) => (humanReadable += `${i + 1}. ${d}\n`));
+          mom.key_discussions.forEach(
+            (d, i) => (humanReadable += `${i + 1}. ${d}\n`),
+          );
           humanReadable += "\n";
         }
 
         if (mom.decisions.length) {
           humanReadable += "✅ Decisions:\n";
-          mom.decisions.forEach((d, i) => (humanReadable += `${i + 1}. ${d}\n`));
+          mom.decisions.forEach(
+            (d, i) => (humanReadable += `${i + 1}. ${d}\n`),
+          );
           humanReadable += "\n";
         }
 
@@ -236,7 +242,9 @@ ${textToSummarize}
         }
         if (mom.questions_raised.length) {
           humanReadable += "❓ Questions Raised:\n";
-          mom.questions_raised.forEach((q, i) => (humanReadable += `${i + 1}. ${q}\n`));
+          mom.questions_raised.forEach(
+            (q, i) => (humanReadable += `${i + 1}. ${q}\n`),
+          );
           humanReadable += "\n";
         }
         if (mom.keywords.length) {
@@ -280,7 +288,10 @@ ${textToSummarize}
           }
           eventBus.emit("mom.generated", meetingToUpdate);
         } catch (evtErr) {
-          console.error("⚠️ Failed to emit webhook events from queue:", evtErr.message);
+          console.error(
+            "⚠️ Failed to emit webhook events from queue:",
+            evtErr.message,
+          );
         }
 
         if (meetingToUpdate) {
@@ -288,7 +299,10 @@ ${textToSummarize}
             await detectResolutions(meetingToUpdate, mom);
             await processStructuredMoM(meetingToUpdate, mom);
           } catch (kgError) {
-            console.error("⚠️ Knowledge graph processing failed (non-fatal):", kgError);
+            console.error(
+              "⚠️ Knowledge graph processing failed (non-fatal):",
+              kgError,
+            );
           }
 
           const io = app.get("io");
@@ -301,7 +315,7 @@ ${textToSummarize}
                 `MoM for "${meetingToUpdate.title}" is ready.`,
                 "ai_processing",
                 `/meeting/${meetingToUpdate._id}`,
-                "View MoM"
+                "View MoM",
               );
               // Send Socket.IO direct notification
               io.to(userId.toString()).emit("mom-generation-complete", {
@@ -311,17 +325,20 @@ ${textToSummarize}
                 mom: meetingToUpdate.structuredMoM,
               });
             } catch (notifErr) {
-              console.error("⚠️ Notification error (continuing):", notifErr.message);
+              console.error(
+                "⚠️ Notification error (continuing):",
+                notifErr.message,
+              );
             }
           }
         }
-        
+
         return { success: true, meetingId: meetingToUpdate?._id };
       }
 
       throw new Error("No summary generated");
     },
-    { connection, concurrency: 5 } // Handle up to 5 concurrent jobs
+    { connection, concurrency: 5 }, // Handle up to 5 concurrent jobs
   );
 
   worker.on("completed", (job) => {
@@ -332,5 +349,7 @@ ${textToSummarize}
     console.error(`❌ Job ${job.id} failed with error:`, err.message);
   });
 
-  console.log("✅ AI Worker initialized and listening to ai-mom-generation queue");
+  console.log(
+    "✅ AI Worker initialized and listening to ai-mom-generation queue",
+  );
 };

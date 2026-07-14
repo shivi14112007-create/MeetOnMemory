@@ -94,7 +94,10 @@ export const uploadPolicy = async (req, res, next) => {
       try {
         const resolvedPath = path.resolve(uploadedFilePath);
         const uploadsDir = path.resolve("uploads");
-        if (resolvedPath.startsWith(uploadsDir) && fs.existsSync(resolvedPath)) {
+        if (
+          resolvedPath.startsWith(uploadsDir) &&
+          fs.existsSync(resolvedPath)
+        ) {
           fs.unlinkSync(resolvedPath);
         }
       } catch {
@@ -146,9 +149,8 @@ export const getPolicies = async (req, res, next) => {
    ───────────────────────────────────────────────────────────── */
 export const downloadPolicy = async (req, res, next) => {
   try {
-    const { safeFilePath, fileName } = await PolicyService.getPolicyDownloadPath(
-      req.params.id,
-    );
+    const { safeFilePath, fileName } =
+      await PolicyService.getPolicyDownloadPath(req.params.id);
 
     return res.download(safeFilePath, fileName);
   } catch (err) {

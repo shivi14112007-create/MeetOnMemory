@@ -21,21 +21,27 @@ const sanitizeEmail = (email) => {
   const sanitized = email.trim().toLowerCase();
   // Simple, ReDoS-safe email validation
   if (sanitized.length > 254) return null; // Max email length
-  if (!sanitized.includes('@') || !sanitized.includes('.')) return null;
-  const parts = sanitized.split('@');
+  if (!sanitized.includes("@") || !sanitized.includes(".")) return null;
+  const parts = sanitized.split("@");
   if (parts.length !== 2) return null;
   const [local, domain] = parts;
   if (!local || !domain) return null;
   if (local.length > 64) return null; // Max local part length
   if (domain.length > 255) return null; // Max domain length
-  if (domain.split('.').length < 2) return null; // At least one dot in domain
+  if (domain.split(".").length < 2) return null; // At least one dot in domain
   return sanitized;
 };
 
 /**
  * Whitelist allowed status values
  */
-const allowedStatuses = ["pending", "accepted", "rejected", "revoked", "expired"];
+const allowedStatuses = [
+  "pending",
+  "accepted",
+  "rejected",
+  "revoked",
+  "expired",
+];
 const isValidStatus = (status) => allowedStatuses.includes(status);
 
 /**
@@ -68,7 +74,10 @@ export const createInvitation = async (req, res) => {
     if (!organizationId || !email) {
       return res
         .status(400)
-        .json({ success: false, message: "Organization ID and email are required." });
+        .json({
+          success: false,
+          message: "Organization ID and email are required.",
+        });
     }
 
     // Validate organizationId
@@ -78,7 +87,9 @@ export const createInvitation = async (req, res) => {
         .json({ success: false, message: "Invalid organization ID." });
     }
 
-    const cleanOrganizationId = new mongoose.Types.ObjectId(String(organizationId));
+    const cleanOrganizationId = new mongoose.Types.ObjectId(
+      String(organizationId),
+    );
 
     // Validate and sanitize email
     const sanitizedEmail = sanitizeEmail(email);
@@ -92,10 +103,16 @@ export const createInvitation = async (req, res) => {
     if (role && !isValidRole(role)) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid role. Must be 'admin' or 'member'." });
+        .json({
+          success: false,
+          message: "Invalid role. Must be 'admin' or 'member'.",
+        });
     }
 
-    const cleanRole = role && isValidRole(role) ? allowedRoles.find(r => r === role) : "member";
+    const cleanRole =
+      role && isValidRole(role)
+        ? allowedRoles.find((r) => r === role)
+        : "member";
 
     const userId = req.user.id;
 
@@ -121,11 +138,16 @@ export const createInvitation = async (req, res) => {
     if (!membership && !isOwner) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to create invitations." });
+        .json({
+          success: false,
+          message: "Not authorized to create invitations.",
+        });
     }
 
     // Check if email already has an active membership
-    const existingUser = await userModel.findOne({ email: sanitizedEmail }).lean();
+    const existingUser = await userModel
+      .findOne({ email: sanitizedEmail })
+      .lean();
     if (existingUser) {
       const existingMembership = await Membership.findOne({
         user: existingUser._id,
@@ -136,7 +158,10 @@ export const createInvitation = async (req, res) => {
       if (existingMembership) {
         return res
           .status(400)
-          .json({ success: false, message: "User is already a member of this organization." });
+          .json({
+            success: false,
+            message: "User is already a member of this organization.",
+          });
       }
     }
 
@@ -150,12 +175,16 @@ export const createInvitation = async (req, res) => {
     if (existingInvitation) {
       return res
         .status(409)
-        .json({ success: false, message: "Pending invitation already exists for this email." });
+        .json({
+          success: false,
+          message: "Pending invitation already exists for this email.",
+        });
     }
 
     // Calculate expiration time (default 7 days)
     const expiresAt = new Date();
-    const expiresInDays = typeof expiresIn === 'number' && expiresIn > 0 ? expiresIn : 7;
+    const expiresInDays =
+      typeof expiresIn === "number" && expiresIn > 0 ? expiresIn : 7;
     expiresAt.setDate(expiresAt.getDate() + expiresInDays);
 
     // Create invitation with validated fields
@@ -169,7 +198,7 @@ export const createInvitation = async (req, res) => {
       expiresAt,
       message: message ? String(message).trim().substring(0, 500) : "",
     };
-    
+
     const invitation = await Invitation.create(invitationData);
 
     res.status(201).json({
@@ -210,7 +239,9 @@ export const getOrganizationInvitations = async (req, res) => {
         .json({ success: false, message: "Invalid organization ID." });
     }
 
-    const cleanOrganizationId = new mongoose.Types.ObjectId(String(organizationId));
+    const cleanOrganizationId = new mongoose.Types.ObjectId(
+      String(organizationId),
+    );
 
     // Validate status if provided
     if (status && !isValidStatus(status)) {
@@ -219,7 +250,10 @@ export const getOrganizationInvitations = async (req, res) => {
         .json({ success: false, message: "Invalid status value." });
     }
 
-    const cleanStatus = status && isValidStatus(status) ? allowedStatuses.find(s => s === status) : undefined;
+    const cleanStatus =
+      status && isValidStatus(status)
+        ? allowedStatuses.find((s) => s === status)
+        : undefined;
 
     const organization = await Organization.findById(cleanOrganizationId);
 
@@ -242,7 +276,10 @@ export const getOrganizationInvitations = async (req, res) => {
     if (!membership && !isOwner) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to view invitations." });
+        .json({
+          success: false,
+          message: "Not authorized to view invitations.",
+        });
     }
 
     const filter = { organization: cleanOrganizationId };
@@ -277,7 +314,9 @@ export const getUserInvitations = async (req, res) => {
     const user = await userModel.findById(req.user.id);
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
     }
 
     const invitations = await Invitation.find({
@@ -311,7 +350,7 @@ export const acceptInvitation = async (req, res) => {
     }
 
     const invitation = await Invitation.findOne({ token }).populate(
-      "organization"
+      "organization",
     );
 
     if (!invitation) {
@@ -323,7 +362,10 @@ export const acceptInvitation = async (req, res) => {
     if (invitation.status !== "pending") {
       return res
         .status(400)
-        .json({ success: false, message: "Invitation is not in pending status." });
+        .json({
+          success: false,
+          message: "Invitation is not in pending status.",
+        });
     }
 
     if (invitation.expiresAt < new Date()) {
@@ -353,7 +395,10 @@ export const acceptInvitation = async (req, res) => {
     if (existingMembership) {
       return res
         .status(400)
-        .json({ success: false, message: "Already a member of this organization." });
+        .json({
+          success: false,
+          message: "Already a member of this organization.",
+        });
     }
 
     // Update invitation status
@@ -414,7 +459,10 @@ export const rejectInvitation = async (req, res) => {
     if (invitation.status !== "pending") {
       return res
         .status(400)
-        .json({ success: false, message: "Invitation is not in pending status." });
+        .json({
+          success: false,
+          message: "Invitation is not in pending status.",
+        });
     }
 
     // Verify email matches
@@ -462,7 +510,8 @@ export const revokeInvitation = async (req, res) => {
     }
 
     const cleanInvitationId = new mongoose.Types.ObjectId(String(id));
-    const invitation = await Invitation.findById(cleanInvitationId).populate("organization");
+    const invitation =
+      await Invitation.findById(cleanInvitationId).populate("organization");
 
     if (!invitation) {
       return res
@@ -484,13 +533,19 @@ export const revokeInvitation = async (req, res) => {
     if (!membership && !isOwner) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to revoke invitations." });
+        .json({
+          success: false,
+          message: "Not authorized to revoke invitations.",
+        });
     }
 
     if (invitation.status !== "pending") {
       return res
         .status(400)
-        .json({ success: false, message: "Can only revoke pending invitations." });
+        .json({
+          success: false,
+          message: "Can only revoke pending invitations.",
+        });
     }
 
     invitation.status = "revoked";
@@ -528,7 +583,10 @@ export const getInvitationByToken = async (req, res) => {
     if (invitation.status !== "pending") {
       return res
         .status(400)
-        .json({ success: false, message: "Invitation is not in pending status." });
+        .json({
+          success: false,
+          message: "Invitation is not in pending status.",
+        });
     }
 
     if (invitation.expiresAt < new Date()) {

@@ -45,7 +45,9 @@ export const createMembershipRequest = async (req, res) => {
         .json({ success: false, message: "Invalid organization ID." });
     }
 
-    const cleanOrganizationId = new mongoose.Types.ObjectId(String(organizationId));
+    const cleanOrganizationId = new mongoose.Types.ObjectId(
+      String(organizationId),
+    );
 
     const userId = req.user.id;
 
@@ -68,7 +70,10 @@ export const createMembershipRequest = async (req, res) => {
     if (existingMembership) {
       return res
         .status(400)
-        .json({ success: false, message: "Already a member of this organization." });
+        .json({
+          success: false,
+          message: "Already a member of this organization.",
+        });
     }
 
     // Check if there's already a pending request
@@ -115,7 +120,14 @@ export const createMembershipRequest = async (req, res) => {
 export const getOrganizationMembershipRequests = async (req, res) => {
   try {
     const { organizationId } = req.params;
-    const { status, search, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = req.query;
+    const {
+      status,
+      search,
+      page = 1,
+      limit = 10,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = req.query;
 
     if (!req.user || !req.user.id) {
       return res
@@ -130,10 +142,15 @@ export const getOrganizationMembershipRequests = async (req, res) => {
         .json({ success: false, message: "Invalid organization ID." });
     }
 
-    const cleanOrganizationId = new mongoose.Types.ObjectId(String(organizationId));
+    const cleanOrganizationId = new mongoose.Types.ObjectId(
+      String(organizationId),
+    );
 
     // Validate status if provided
-    const validStatus = status && isValidStatus(status) ? allowedStatuses.find(s => s === status) : null;
+    const validStatus =
+      status && isValidStatus(status)
+        ? allowedStatuses.find((s) => s === status)
+        : null;
     if (status && !validStatus) {
       return res
         .status(400)
@@ -192,7 +209,7 @@ export const getOrganizationMembershipRequests = async (req, res) => {
     const sortField = validSortFields.includes(sortBy) ? sortBy : "createdAt";
     const sortDirection = sortOrder === "asc" ? 1 : -1;
     const sortObj = {};
-    
+
     if (sortField === "name") {
       sortObj["user.name"] = sortDirection;
     } else {
@@ -291,9 +308,8 @@ export const approveMembershipRequest = async (req, res) => {
     }
 
     const cleanRequestId = new mongoose.Types.ObjectId(String(id));
-    const request = await MembershipRequest.findById(cleanRequestId).populate(
-      "organization"
-    );
+    const request =
+      await MembershipRequest.findById(cleanRequestId).populate("organization");
 
     if (!request) {
       return res
@@ -321,14 +337,19 @@ export const approveMembershipRequest = async (req, res) => {
     if (!membership && !isOwner) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to approve requests." });
+        .json({
+          success: false,
+          message: "Not authorized to approve requests.",
+        });
     }
 
     // Update request status
     request.status = "approved";
     request.reviewedBy = req.user.id;
     request.reviewedAt = new Date();
-    request.reviewNotes = reviewNotes ? String(reviewNotes).trim().substring(0, 500) : "";
+    request.reviewNotes = reviewNotes
+      ? String(reviewNotes).trim().substring(0, 500)
+      : "";
     await request.save();
 
     // Create membership
@@ -389,9 +410,8 @@ export const rejectMembershipRequest = async (req, res) => {
     }
 
     const cleanRequestId = new mongoose.Types.ObjectId(String(id));
-    const request = await MembershipRequest.findById(cleanRequestId).populate(
-      "organization"
-    );
+    const request =
+      await MembershipRequest.findById(cleanRequestId).populate("organization");
 
     if (!request) {
       return res
@@ -419,14 +439,19 @@ export const rejectMembershipRequest = async (req, res) => {
     if (!membership && !isOwner) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to reject requests." });
+        .json({
+          success: false,
+          message: "Not authorized to reject requests.",
+        });
     }
 
     // Update request status
     request.status = "rejected";
     request.reviewedBy = req.user.id;
     request.reviewedAt = new Date();
-    request.reviewNotes = reviewNotes ? String(reviewNotes).trim().substring(0, 500) : "";
+    request.reviewNotes = reviewNotes
+      ? String(reviewNotes).trim().substring(0, 500)
+      : "";
     await request.save();
 
     AuditService.logAction({
@@ -482,7 +507,10 @@ export const cancelMembershipRequest = async (req, res) => {
     if (request.user.toString() !== req.user.id.toString()) {
       return res
         .status(403)
-        .json({ success: false, message: "Not authorized to cancel this request." });
+        .json({
+          success: false,
+          message: "Not authorized to cancel this request.",
+        });
     }
 
     if (request.status !== "pending") {

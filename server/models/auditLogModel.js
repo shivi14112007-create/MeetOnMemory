@@ -30,7 +30,7 @@ const auditLogSchema = new mongoose.Schema(
       default: {},
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Create compound index for sorting by date within an org

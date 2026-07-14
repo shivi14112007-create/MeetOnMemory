@@ -317,10 +317,7 @@ export const reanalyzePolicy = async (policyId) => {
     try {
       eventBus.emit("policy.updated", policy);
     } catch (evtErr) {
-      console.error(
-        "⚠️ Failed to emit policy.updated event:",
-        evtErr.message,
-      );
+      console.error("⚠️ Failed to emit policy.updated event:", evtErr.message);
     }
 
     // Re-index + re-evaluate (fire-and-forget)

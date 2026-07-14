@@ -92,7 +92,12 @@ app.use((req, res, next) => {
   const isAuthRoute = req.path.startsWith("/api/auth");
   const isSyncPath = req.path.startsWith("/sync");
 
-  if (isSafeMethod || isAuthRoute || isSyncPath || process.env.NODE_ENV === "test") {
+  if (
+    isSafeMethod ||
+    isAuthRoute ||
+    isSyncPath ||
+    process.env.NODE_ENV === "test"
+  ) {
     return next();
   }
   return csrfProtection(req, res, next);

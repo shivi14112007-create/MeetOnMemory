@@ -76,9 +76,7 @@ const _pollAssemblyAI = async (transcriptId, intervalMs = 2500) => {
       return checkRes.data.text || "";
     }
     if (checkRes.data.status === "error") {
-      throw new Error(
-        checkRes.data.error || "AssemblyAI transcription error",
-      );
+      throw new Error(checkRes.data.error || "AssemblyAI transcription error");
     }
     await new Promise((r) => setTimeout(r, intervalMs));
   }
@@ -190,7 +188,10 @@ ${textToSummarize}
     console.log("✅ Gemini response received");
     return structured;
   } catch (gemErr) {
-    console.error("❌ Gemini API error, falling back to HuggingFace:", gemErr.message);
+    console.error(
+      "❌ Gemini API error, falling back to HuggingFace:",
+      gemErr.message,
+    );
   }
 
   // ── Fallback: HuggingFace ────────────────────────────────────
