@@ -113,9 +113,9 @@ class MembershipRequestService {
       throw new ForbiddenError("Not authorized to view requests.");
     }
 
-    const filter = { organization: cleanOrganizationId };
+    const filter = { organization: { $eq: cleanOrganizationId } };
     if (validStatus) {
-      filter.status = validStatus;
+      filter.status = { $eq: validStatus };
     }
 
     const pageNum = parseInt(page, 10);
