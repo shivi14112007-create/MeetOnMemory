@@ -634,3 +634,40 @@ export const searchOrganizations = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+/**
+ * ✅ Get user's joined organizations
+ * GET /api/organizations/user
+ */
+export const getUserOrganizations = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication failed." });
+    }
+
+    const Membership = (await import("../models/membershipModel.js")).default;
+    const memberships = await Membership.find({
+      user: req.user.id,
+      status: "active",
+    })
+      .populate("organization", "name slug description logo visibility members updatedAt")
+      .lean();
+
+    const organizations = memberships
+      .filter((m) => m.organization)
+      .map((m) => ({
+        ...m.organization,
+        role: m.role,
+        memberCount: m.organization.members ? m.organization.members.length : 0,
+        lastActive: m.organization.updatedAt || new Date(),
+      }));
+
+    res.status(200).json({ success: true, organizations });
+  } catch (error) {
+    console.error("❌ Error fetching user organizations:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+

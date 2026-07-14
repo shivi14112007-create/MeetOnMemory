@@ -119,8 +119,8 @@ if (process.env.NODE_ENV !== "test") {
 
 // ROUTES
 app.use("/api/auth", authRoutes);
-app.use("/api/organization", organizationRoutes);
-app.use("/api/organization/new", organizationRoutesNew);
+app.use(["/api/organization", "/api/organizations"], organizationRoutes);
+app.use(["/api/organization/new", "/api/organizations/new"], organizationRoutesNew);
 app.use("/api/membership", membershipRoutes);
 app.use("/api/membership-request", membershipRequestRoutes);
 app.use("/api/invitation", invitationRoutes);

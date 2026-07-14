@@ -9,6 +9,7 @@ import {
   getPublicOrganizationBySlug,
   browsePublicOrganizations,
   searchOrganizations,
+  getUserOrganizations,
 } from "../controllers/organizationController.js";
 import userAuth from "../middleware/userAuth.js";
 import { apiLimiter, writeLimiter } from "../middleware/rateLimiter.js";
@@ -19,12 +20,14 @@ const router = express.Router();
 // Apply rate limiting to all routes
 router.use(apiLimiter);
 
+// Fetch user's joined organizations
+router.get("/user", userAuth, getUserOrganizations);
+
 // Unified endpoint: handles both "create new" and "join existing" organizations
 router.post(
   "/create-or-join",
   userAuth,
   writeLimiter,
-  requirePermission("organizations", "create"),
   createOrJoinOrganization,
 );
 
@@ -33,7 +36,6 @@ router.post(
   "/join",
   userAuth,
   writeLimiter,
-  requirePermission("organizations", "leave"),
   joinOrganization,
 );
 

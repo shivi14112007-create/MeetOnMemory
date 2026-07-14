@@ -269,7 +269,7 @@ const Navbar = () => {
     return currentPath === tabPath;
   };
 
-  const appLinks = [
+  const primaryLinks = [
     {
       label: "Dashboard",
       href: "/dashboard",
@@ -289,6 +289,25 @@ const Navbar = () => {
       permission: { resource: "tasks", action: "view" },
     },
     {
+      label: "Organizations",
+      href: "/organizations",
+      icon: Building2,
+      permission: { resource: "organizations", action: "view" },
+    },
+    {
+      label: "AI Search",
+      href: "/ai-search",
+      icon: Search,
+      permission: { resource: "ai_search", action: "search" },
+    },
+  ].filter(
+    (link) =>
+      !link.permission ||
+      hasPermission(link.permission.resource, link.permission.action),
+  );
+
+  const secondaryLinks = [
+    {
       label: "Compliance",
       href: "/policy-compliance",
       icon: ShieldAlert,
@@ -306,23 +325,14 @@ const Navbar = () => {
       icon: Users,
       permission: { resource: "team_members", action: "view" },
     },
-    {
-      label: "Organizations",
-      href: "/organizations",
-      icon: Building2,
-      permission: { resource: "organizations", action: "view" },
-    },
-    {
-      label: "AI Search",
-      href: "/ai-search",
-      icon: Search,
-      permission: { resource: "ai_search", action: "search" },
-    },
   ].filter(
     (link) =>
       !link.permission ||
       hasPermission(link.permission.resource, link.permission.action),
   );
+
+  // Retain all allowed links for the mobile drawer navigation
+  const appLinks = [...primaryLinks, ...secondaryLinks];
 
   return (
     <header
@@ -387,7 +397,7 @@ const Navbar = () => {
               className="hidden md:flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 p-1 rounded-2xl"
               aria-label="Application navigation"
             >
-              {appLinks.map((link) => {
+              {primaryLinks.map((link) => {
                 const Icon = link.icon;
                 const active = isTabActive(link.href);
                 return (
@@ -623,21 +633,43 @@ const Navbar = () => {
                           <Settings className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                           Settings
                         </button>
-
-                        {userData?.role === "admin" && (
-                          <button
-                            onClick={() => {
-                              setMenuOpen(false);
-                              navigate("/admin-panel");
-                            }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 rounded-xl transition-colors text-left cursor-pointer"
-                            role="menuitem"
-                          >
-                            <Sparkles className="w-3.5 h-3.5 text-yellow-500" />
-                            Admin Panel
-                          </button>
-                        )}
                       </div>
+
+                      {(secondaryLinks.length > 0 || userData?.role === "admin") && (
+                        <div className="border-t border-gray-100 dark:border-gray-700 p-1">
+                          {secondaryLinks.map((link) => {
+                            const LinkIcon = link.icon;
+                            return (
+                              <button
+                                key={link.href}
+                                onClick={() => {
+                                  setMenuOpen(false);
+                                  navigate(link.href);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 rounded-xl transition-colors text-left cursor-pointer"
+                                role="menuitem"
+                              >
+                                <LinkIcon className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                                {link.label}
+                              </button>
+                            );
+                          })}
+
+                          {userData?.role === "admin" && (
+                            <button
+                              onClick={() => {
+                                setMenuOpen(false);
+                                navigate("/admin-panel");
+                              }}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 rounded-xl transition-colors text-left cursor-pointer"
+                              role="menuitem"
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-yellow-500" />
+                              Admin Panel
+                            </button>
+                          )}
+                        </div>
+                      )}
 
                       <div className="border-t border-gray-100 dark:border-gray-600 p-1">
                         <button
