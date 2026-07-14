@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import AppContent from "../context/AppContent";
 import Navbar from "../components/Navbar.jsx";
 import { organizationApi } from "../services";
 import {
