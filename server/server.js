@@ -26,6 +26,11 @@ import knowledgeRoutes from "./routes/knowledgeRoutes.js";
 import policyComplianceRoutes from "./routes/policyComplianceRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import slackRoutes from "./routes/slackRoutes.js";
+
+// Import slackService to register its eventBus 'mom.generated' listener.
+// The import itself is enough — the listener is set up at module load time.
+import "./services/slackService.js";
 
 import { initVectorStore } from "./utils/embeddingUtils.js";
 import meetingSocket from "./socket/meetingSocket.js";
@@ -73,8 +78,21 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+// Capture the raw request body so Slack's signing-secret HMAC verification
+// can read it before the JSON/urlencoded parsers consume the stream.
+app.use(express.json({
+  limit: "50mb",
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  },
+}));
+app.use(express.urlencoded({
+  extended: true,
+  limit: "50mb",
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  },
+}));
 app.use(cookieParser());
 
 // Enforce CSRF protection on mutation routes
@@ -91,11 +109,14 @@ app.use((req, res, next) => {
   const isSafeMethod = ["GET", "HEAD", "OPTIONS"].includes(req.method);
   const isAuthRoute = req.path.startsWith("/api/auth");
   const isSyncPath = req.path.startsWith("/sync");
+  // Slack cannot send CSRF tokens — exclude all Slack endpoints
+  const isSlackRoute = req.path.startsWith("/api/slack");
 
   if (
     isSafeMethod ||
     isAuthRoute ||
     isSyncPath ||
+    isSlackRoute ||
     process.env.NODE_ENV === "test"
   ) {
     return next();
@@ -136,6 +157,7 @@ app.use("/api/knowledge", knowledgeRoutes);
 app.use("/api/compliance", policyComplianceRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/webhooks", webhookRoutes);
+app.use("/api/slack", slackRoutes);
 
 // Health check endpoint — registered BEFORE the global rate limiter so
 // keep-alive pings (e.g. from GitHub Actions cron job) are never blocked.

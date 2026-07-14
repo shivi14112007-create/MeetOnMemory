@@ -64,13 +64,15 @@ if (isMock) {
     },
   });
 
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error("❌ SMTP Connection Error:", error);
-    } else {
-      console.log("✅ SMTP Server is ready to send emails!");
-    }
-  });
+  if (process.env.NODE_ENV !== "test") {
+    transporter.verify((error, success) => {
+      if (error) {
+        console.error("❌ SMTP Connection Error:", error);
+      } else {
+        console.log("✅ SMTP Server is ready to send emails!");
+      }
+    });
+  }
 }
 
 export default transporter;
