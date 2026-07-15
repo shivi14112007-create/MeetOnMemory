@@ -1,12 +1,11 @@
-// client/src/components/Navbar.jsx
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AppContent from "../context/AppContent";
 import { useRBAC } from "../hooks/useRBAC.js";
 import useTheme from "../context/useTheme.jsx";
 import { toast } from "react-toastify";
-import { notificationApi, authApi } from "../services";
+import { notificationApi, authApi, organizationApi } from "../services";
 import { io } from "socket.io-client";
 import LanguageSwitcher from "./LanguageSwitcher.jsx";
 import {
@@ -28,6 +27,9 @@ import {
   ShieldAlert,
   Moon,
   Sun,
+  Plus,
+  Compass,
+  Check,
 } from "lucide-react";
 
 const NAV_LINK_KEYS = [
@@ -52,6 +54,48 @@ const Navbar = () => {
   const [mobileNotifOpen, setMobileNotifOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
+
+  const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
+  const [userOrgs, setUserOrgs] = useState([]);
+  const [switchingOrg, setSwitchingOrg] = useState(false);
+
+  const fetchUserOrgs = useCallback(async () => {
+    try {
+      const { data } = await organizationApi.getUserOrganizations();
+      if (data.success) {
+        setUserOrgs(data.organizations);
+      }
+    } catch (err) {
+      console.error("Error fetching user orgs:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      fetchUserOrgs();
+    }
+  }, [userData, fetchUserOrgs]);
+
+  const handleSwitchOrg = async (orgId) => {
+    if (switchingOrg) return;
+    setSwitchingOrg(true);
+    try {
+      const { data } = await organizationApi.selectOrganization({ organizationId: orgId });
+      if (data.success) {
+        toast.success(data.message || "Organization switched successfully");
+        setUserData(data.userData);
+        navigate("/dashboard");
+        window.location.reload();
+      } else {
+        toast.error(data.message || "Failed to switch organization");
+      }
+    } catch (err) {
+      console.error("Error switching organization:", err);
+      toast.error(err.response?.data?.message || "Failed to switch organization");
+    } finally {
+      setSwitchingOrg(false);
+    }
+  };
 
   useEffect(() => {
     setImgFailed(false);
@@ -153,6 +197,7 @@ const Navbar = () => {
   const menuRef = useRef();
   const mobileMenuRef = useRef();
   const notificationsRef = useRef();
+  const orgDropdownRef = useRef();
 
   // Detect scroll for navbar style
   useEffect(() => {
@@ -172,6 +217,12 @@ const Navbar = () => {
         !notificationsRef.current.contains(e.target)
       ) {
         setNotificationsOpen(false);
+      }
+      if (
+        orgDropdownRef.current &&
+        !orgDropdownRef.current.contains(e.target)
+      ) {
+        setOrgDropdownOpen(false);
       }
       if (
         mobileMenuRef.current &&
@@ -461,6 +512,125 @@ const Navbar = () => {
 
             {userData ? (
               <>
+                {/* Organization Switcher */}
+                <div className="relative hidden md:block" ref={orgDropdownRef}>
+                  <button
+                    onClick={() => setOrgDropdownOpen((s) => !s)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200/60 dark:border-gray-600/60 hover:bg-gray-100/50 dark:hover:bg-gray-700/50 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+                    aria-expanded={orgDropdownOpen}
+                    aria-haspopup="true"
+                    aria-label="Switch organization"
+                  >
+                    <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0 overflow-hidden">
+                      {userData.organization?.logo ? (
+                        <img
+                          src={userData.organization.logo}
+                          alt={userData.organization.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Building2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      )}
+                    </div>
+                    <div className="text-left max-w-[130px] truncate">
+                      <p className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate">
+                        {userData.organization?.name || "Select Org"}
+                      </p>
+                      <p className="text-[9px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">
+                        {userData.role || "Member"}
+                      </p>
+                    </div>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 shrink-0 ${
+                        orgDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {orgDropdownOpen && (
+                    <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-xl overflow-hidden z-50">
+                      <div className="px-4 py-2 bg-gray-50/80 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-600">
+                        <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider">
+                          Current Organization
+                        </p>
+                      </div>
+
+                      <div className="p-1.5 max-h-56 overflow-y-auto divide-y divide-gray-50 dark:divide-gray-700">
+                        {userOrgs.length > 0 ? (
+                          userOrgs.map((org) => {
+                            const isCurrent = org._id === userData.organization?._id;
+                            return (
+                              <button
+                                key={org._id}
+                                onClick={() => {
+                                  setOrgDropdownOpen(false);
+                                  if (!isCurrent) handleSwitchOrg(org._id);
+                                }}
+                                className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all text-left cursor-pointer ${
+                                  isCurrent
+                                    ? "bg-blue-50/75 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold"
+                                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-100"
+                                }`}
+                                disabled={switchingOrg}
+                              >
+                                <div className="flex items-center gap-2.5 truncate">
+                                  <div className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0 overflow-hidden border border-gray-200/40 dark:border-gray-600/40">
+                                    {org.logo ? (
+                                      <img
+                                        src={org.logo}
+                                        alt={org.name}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <Building2 className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                                    )}
+                                  </div>
+                                  <div className="truncate">
+                                    <p className="text-xs truncate">{org.name}</p>
+                                    <p className="text-[9px] text-gray-400 dark:text-gray-500 uppercase tracking-wider capitalize font-semibold">
+                                      {org.role || "Member"}
+                                    </p>
+                                  </div>
+                                </div>
+                                {isCurrent && (
+                                  <Check className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                                )}
+                              </button>
+                            );
+                          })
+                        ) : (
+                          <div className="py-4 text-center text-gray-400 dark:text-gray-500 text-xs">
+                            No joined organizations
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-1.5 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                        <button
+                          onClick={() => {
+                            setOrgDropdownOpen(false);
+                            navigate("/create-organization");
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 rounded-xl transition-colors text-left cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                          Create Organization
+                        </button>
+                        <button
+                          onClick={() => {
+                            setOrgDropdownOpen(false);
+                            navigate("/browse-organizations");
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-300 rounded-xl transition-colors text-left cursor-pointer"
+                        >
+                          <Compass className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                          Browse Organizations
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Desktop Notification Area */}
                 <div
                   className="relative hidden sm:block"
@@ -753,6 +923,86 @@ const Navbar = () => {
                   <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
                     {userData?.email || "user@example.com"}
                   </p>
+                </div>
+              </div>
+
+              {/* Mobile Organization Switcher */}
+              <div className="px-3.5 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-100/60 dark:border-gray-700 rounded-2xl mb-2">
+                <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-2.5 truncate">
+                    <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0 overflow-hidden">
+                      {userData.organization?.logo ? (
+                        <img
+                          src={userData.organization.logo}
+                          alt={userData.organization.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Building2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      )}
+                    </div>
+                    <div className="truncate">
+                      <p className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate">
+                        {userData.organization?.name || "Select Org"}
+                      </p>
+                      <p className="text-[9px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">
+                        Current: {userData.role || "Member"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1 max-h-40 overflow-y-auto mb-2">
+                  {userOrgs.length > 0 ? (
+                    userOrgs.map((org) => {
+                      const isCurrent = org._id === userData.organization?._id;
+                      return (
+                        <button
+                          key={org._id}
+                          onClick={() => {
+                            setMobileOpen(false);
+                            if (!isCurrent) handleSwitchOrg(org._id);
+                          }}
+                          className={`w-full flex items-center justify-between gap-3 px-2 py-1.5 rounded-lg text-left text-xs cursor-pointer ${
+                            isCurrent
+                              ? "bg-blue-50/75 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold"
+                              : "text-gray-700 dark:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
+                          }`}
+                          disabled={switchingOrg}
+                        >
+                          <span className="truncate">{org.name} ({org.role || "Member"})</span>
+                          {isCurrent && <Check className="w-3.5 h-3.5 shrink-0 text-blue-600" />}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="py-2 text-center text-gray-400 dark:text-gray-500 text-xs">
+                      No joined organizations
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      navigate("/create-organization");
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-white dark:bg-gray-700 hover:bg-gray-50 border border-gray-200/60 dark:border-gray-600 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-200 cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Create Org
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      navigate("/browse-organizations");
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-white dark:bg-gray-700 hover:bg-gray-50 border border-gray-200/60 dark:border-gray-600 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-200 cursor-pointer"
+                  >
+                    <Compass className="w-3 h-3" />
+                    Browse Orgs
+                  </button>
                 </div>
               </div>
 
