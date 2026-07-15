@@ -126,7 +126,7 @@ export const createOrJoinOrganization = async (req, res) => {
     // Fetch updated user data (with organization populated)
     const updatedUser = await userModel
       .findById(userId)
-      .populate("organization", "name");
+      .populate("organization", "name logo");
 
     // Defensive checks in case something is missing
     const roleStr =
@@ -229,7 +229,7 @@ export const joinOrganization = async (req, res) => {
 
     const updatedUser = await userModel
       .findById(userId)
-      .populate("organization", "name");
+      .populate("organization", "name logo");
 
     // Notify the organization admin
     const io = req.app.get("io");
@@ -311,15 +311,26 @@ export const selectOrganization = async (req, res) => {
       });
     }
 
-    // Update user's selected organization
+    // Get user's membership role in the selected organization
+    const Membership = (await import("../models/membershipModel.js")).default;
+    const membership = await Membership.findOne({
+      user: userId,
+      organization: organization._id,
+      status: "active",
+    });
+
+    const userRole = membership ? membership.role : "member";
+
+    // Update user's selected organization and role
     await userModel.findByIdAndUpdate(userId, {
       organization: organization._id,
+      role: userRole,
       hasCompletedOnboarding: true,
     });
 
     const updatedUser = await userModel
       .findById(userId)
-      .populate("organization", "name");
+      .populate("organization", "name logo");
 
     res.status(200).json({
       success: true,

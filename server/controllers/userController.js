@@ -39,7 +39,7 @@ export const getUserData = async (req, res) => {
     const user = await userModel
       .findById(req.user.id)
       .select("-password")
-      .populate("organization", "name");
+      .populate("organization", "name logo");
 
     if (user) {
       res.status(200).json({
@@ -108,7 +108,7 @@ export const updateUserProfile = async (req, res) => {
         },
         { new: true },
       )
-      .populate("organization", "name");
+      .populate("organization", "name logo");
 
     if (!updatedUser) {
       return res
