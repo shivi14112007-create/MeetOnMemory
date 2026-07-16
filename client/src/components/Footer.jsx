@@ -88,6 +88,12 @@ const Footer = () => {
               >
                 {t("footer.terms")}
               </Link>
+              <Link
+                to="/security"
+                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              >
+                {t("footer.security", "Security")}
+              </Link>
               <a
                 href="https://github.com/imuniqueshiv/MeetOnMemory"
                 target="_blank"
@@ -330,6 +336,10 @@ const Footer = () => {
               <span>•</span>
               <Link to="/terms" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 {t("footer.terms")}
+              </Link>
+              <span>•</span>
+              <Link to="/security" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                {t("footer.security", "Security")}
               </Link>
             </div>
           </div>

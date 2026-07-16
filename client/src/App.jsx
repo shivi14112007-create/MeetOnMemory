@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 import PublicOrganizationProfile from "./pages/PublicOrganizationProfile.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
+import Security from "./pages/Security.jsx";
 
 // --- Protected Pages ---
 import MeetingListPage from "./pages/MeetingListPage.jsx";
@@ -162,6 +163,7 @@ const App = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/security" element={<Security />} />
           <Route
             path="/organizations/:slug"
             element={<PublicOrganizationProfile />}
