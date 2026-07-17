@@ -212,6 +212,10 @@ export const initWebhookWorker = () => {
     );
   });
 
+  worker.on("error", (err) => {
+    console.error("❌ Webhook Worker error:", err.message);
+  });
+
   console.log(
     "✅ Webhook Worker initialized and listening to webhook-dispatches queue",
   );

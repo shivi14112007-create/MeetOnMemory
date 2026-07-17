@@ -111,6 +111,10 @@ export const initAIWorker = (app) => {
     console.error(`❌ Job ${job.id} failed with error:`, err.message);
   });
 
+  worker.on("error", (err) => {
+    console.error("❌ AI Worker error:", err.message);
+  });
+
   console.log(
     "✅ AI Worker initialized and listening to ai-mom-generation queue",
   );
@@ -135,6 +139,10 @@ export const initDataExportWorker = (app) => {
 
   worker.on("failed", (job, err) => {
     console.error(`❌ Data Export Job ${job.id} failed with error:`, err.message);
+  });
+
+  worker.on("error", (err) => {
+    console.error("❌ Data Export Worker error:", err.message);
   });
 
   console.log("✅ Data Export Worker initialized and listening to data-export-queue");
