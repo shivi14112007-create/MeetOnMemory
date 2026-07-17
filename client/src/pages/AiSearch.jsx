@@ -4,6 +4,8 @@ import Navbar from "../components/Navbar.jsx";
 import SearchBar from "../components/ai-search/SearchBar.jsx";
 import SearchFilters from "../components/ai-search/SearchFilters.jsx";
 import SearchResultCard from "../components/ai-search/SearchResultCard.jsx";
+import HybridResultCard from "../components/ai-search/HybridResultCard.jsx";
+import HybridSearchToggle from "../components/ai-search/HybridSearchToggle.jsx";
 import SearchSkeleton from "../components/ai-search/SearchSkeleton.jsx";
 import SearchEmptyState from "../components/ai-search/SearchEmptyState.jsx";
 import { apiClient } from "../services";
@@ -61,7 +63,9 @@ const ResultModal = ({ result, onClose }) => {
               </p>
             </div>
             <div>
-              <span className="text-gray-500">Similarity Score</span>
+              <span className="text-gray-500">
+                {t("aiSearch.similarityScore")}
+              </span>
               <p className="font-medium text-gray-800">
                 {result.similarityScore || "N/A"}
               </p>
@@ -99,6 +103,7 @@ const ResultModal = ({ result, onClose }) => {
 };
 
 const AiSearch = () => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,6 +115,11 @@ const AiSearch = () => {
     dateFrom: "",
     dateTo: "",
     sortBy: "relevance",
+  });
+  const [searchMode, setSearchMode] = useState("standard"); // "standard" | "hybrid"
+  const [hybridWeights, setHybridWeights] = useState({
+    semanticWeight: 0.7,
+    graphWeight: 0.3,
   });
 
   const handleSearch = async () => {
@@ -124,29 +134,35 @@ const AiSearch = () => {
     setHasSearched(true);
 
     try {
-      const res = await apiClient.post("/api/ai-search", { query, filters });
-      const data = res.data;
+      if (searchMode === "hybrid") {
+        const res = await apiClient.post("/api/search/hybrid", {
+          query,
+          ...hybridWeights,
+        });
+        setResults(res.data.results || []);
+      } else {
+        const res = await apiClient.post("/api/ai-search", { query, filters });
+        const data = res.data;
 
-      let sortedResults = data.results || [];
+        let sortedResults = data.results || [];
 
-      if (filters.sortBy === "date-desc") {
-        sortedResults.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-        );
-      } else if (filters.sortBy === "date-asc") {
-        sortedResults.sort(
-          (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-        );
+        if (filters.sortBy === "date-desc") {
+          sortedResults.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+          );
+        } else if (filters.sortBy === "date-asc") {
+          sortedResults.sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+          );
+        }
+
+        setResults(sortedResults);
       }
-
-      setResults(sortedResults);
     } catch (err) {
       console.error("❌ Search error:", err);
 
       if (err.message === "Failed to fetch") {
-        setError(
-          "Unable to connect to the server. Please check your internet connection and try again.",
-        );
+        setError(t("aiSearch.unableToConnect"));
       } else if (err.message.includes("500")) {
         setError("Server error. Please try again later.");
       } else if (err.message.includes("404")) {
@@ -174,6 +190,10 @@ const AiSearch = () => {
     window.open(`/meetings/${result.meetingId}`, "_blank");
   };
 
+  const handleOpenMeetingById = (meetingId) => {
+    if (meetingId) window.open(`/meetings/${meetingId}`, "_blank");
+  };
+
   const handleCopySummary = async (result) => {
     const textToCopy = result.summary || result.transcript || "";
     if (textToCopy) {
@@ -195,11 +215,10 @@ const AiSearch = () => {
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-3 tracking-tight">
           🤖 Smart AI Meeting Search
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8 text-sm md:text-base max-w-2xl">
-          Search across your <b>meeting transcripts</b>, <b>policies</b>, and{" "}
-          <b>AI summaries</b> using natural language — powered by your
-          intelligent semantic engine.
-        </p>
+        <p
+          className="text-gray-600 dark:text-gray-400 mb-8 text-sm md:text-base max-w-2xl"
+          dangerouslySetInnerHTML={{ __html: t("aiSearch.subtitle") }}
+        />
 
         {/* Search Input */}
         <SearchBar
@@ -210,14 +229,22 @@ const AiSearch = () => {
           onClear={handleClear}
         />
 
+        <HybridSearchToggle
+          mode={searchMode}
+          setMode={setSearchMode}
+          weights={hybridWeights}
+          setWeights={setHybridWeights}
+        />
+
         {/* Error Message */}
         {error && (
           <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400 text-sm text-left w-full">
             <span className="font-semibold">
               ⚠️{" "}
-              {error.includes("Unable to connect")
-                ? "Connection Error"
-                : "Error"}
+              {error.includes("Unable to connect") ||
+              error.includes(t("aiSearch.unableToConnect").substring(0, 10))
+                ? t("aiSearch.connectionError")
+                : t("aiSearch.error")}
             </span>
             <p className="mt-1">{error}</p>
           </div>
@@ -229,21 +256,31 @@ const AiSearch = () => {
 
           {!loading && results.length > 0 && (
             <>
-              <SearchFilters
-                filters={filters}
-                setFilters={setFilters}
-                resultCount={results.length}
-              />
+              {searchMode === "standard" && (
+                <SearchFilters
+                  filters={filters}
+                  setFilters={setFilters}
+                  resultCount={results.length}
+                />
+              )}
               <div className="space-y-5">
-                {results.map((result, index) => (
-                  <SearchResultCard
-                    key={result.meetingId || index}
-                    result={result}
-                    onViewDetails={handleViewDetails}
-                    onOpenMeeting={handleOpenMeeting}
-                    onCopySummary={handleCopySummary}
-                  />
-                ))}
+                {searchMode === "hybrid"
+                  ? results.map((result, index) => (
+                      <HybridResultCard
+                        key={result.key || index}
+                        result={result}
+                        onOpenMeeting={handleOpenMeetingById}
+                      />
+                    ))
+                  : results.map((result, index) => (
+                      <SearchResultCard
+                        key={result.meetingId || index}
+                        result={result}
+                        onViewDetails={handleViewDetails}
+                        onOpenMeeting={handleOpenMeeting}
+                        onCopySummary={handleCopySummary}
+                      />
+                    ))}
               </div>
             </>
           )}
