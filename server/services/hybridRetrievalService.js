@@ -19,6 +19,8 @@
 import Meeting from "../models/meetingModel.js";
 import { embedText, searchVectorStore } from "../utils/embeddingUtils.js";
 import { cosineSimilarity } from "../utils/similarity.js";
+import { buildExplanation } from "../utils/explanationBuilder.js";
+import { recordMemoryAccessBatch } from "./importanceScoringService.js";
 import {
   buildGraph,
   expandFromSeeds,
@@ -187,7 +189,14 @@ async function runSemanticSearch(query, organization, graph, options) {
   }
 
   results.sort((a, b) => b.semanticScore - a.semanticScore);
-  return results.slice(0, options.semanticTopK);
+  const topResults = results.slice(0, options.semanticTopK);
+  // 1-based rank within the semantic-only ordering, captured before graph
+  // fusion potentially reorders things - this is what "vector search
+  // ranking" means in the explanation layer (see explanationBuilder.js).
+  topResults.forEach((r, index) => {
+    r.semanticRank = index + 1;
+  });
+  return topResults;
 }
 
 /**
@@ -206,6 +215,7 @@ export function fuseResults(semanticResults, graphExpansions, options) {
       title: hit.title,
       summary: hit.summary,
       semanticScore: hit.semanticScore,
+      semanticRank: hit.semanticRank ?? null,
       graphScore: 0,
       hops: 0,
       connectedVia: null,
@@ -228,6 +238,7 @@ export function fuseResults(semanticResults, graphExpansions, options) {
         title: node.text || node.id,
         summary: node.text || null,
         semanticScore: 0,
+        semanticRank: null,
         graphScore: hit.graphScore,
         hops: hit.hops,
         connectedVia: hit.path,
@@ -300,6 +311,50 @@ async function enrichWithMeetingContext(rankedResults, graph) {
 }
 
 /**
+ * Attaches a human-readable "why was this returned?" explanation to each
+ * result (FEATURE #270), built from data already loaded onto the graph
+ * nodes - no extra DB queries needed. Also fires a fire-and-forget access
+ * recording for any decision/action-item results, so future recency-based
+ * explanations (and the existing importance-scoring feature) stay accurate.
+ */
+function attachExplanations(rankedResults, graph, organization) {
+  const decisionIds = [];
+  const actionItemIds = [];
+
+  const explained = rankedResults.map((result, index) => {
+    const node =
+      result.type === NODE_TYPES.MEETING ? null : graph.nodes.get(result.key);
+
+    if (result.type === NODE_TYPES.DECISION) decisionIds.push(result.id);
+    if (result.type === NODE_TYPES.ACTION_ITEM) actionItemIds.push(result.id);
+
+    const explanation = buildExplanation({
+      type: result.type,
+      semanticScore: result.semanticScore || 0,
+      graphScore: result.graphScore || 0,
+      hops: result.hops || 0,
+      vectorRank: result.semanticRank ?? null,
+      memory: node,
+      organization,
+    });
+
+    return { ...result, rank: index + 1, explanation };
+  });
+
+  // Fire-and-forget: never let access tracking slow down or break a search
+  // response. Reuses the same recording path the importance-scoring
+  // feature (#269) already relies on, so the two stay consistent.
+  if (decisionIds.length) {
+    recordMemoryAccessBatch("decision", decisionIds).catch(() => {});
+  }
+  if (actionItemIds.length) {
+    recordMemoryAccessBatch("actionItem", actionItemIds).catch(() => {});
+  }
+
+  return explained;
+}
+
+/**
  * Main entry point: hybrid retrieval combining semantic vector search with
  * knowledge-graph multi-hop expansion.
  *
@@ -341,9 +396,10 @@ export async function hybridRetrieve(query, organization, rawOptions = {}) {
   const fused = fuseResults(semanticResults, graphExpansions, options);
   const topResults = fused.slice(0, options.topK);
   const enriched = await enrichWithMeetingContext(topResults, graph);
+  const explained = attachExplanations(enriched, graph, organization);
 
   return {
-    results: enriched,
+    results: explained,
     meta: {
       query,
       options,

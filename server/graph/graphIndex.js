@@ -53,10 +53,10 @@ export async function buildGraph(organization) {
 
   const [decisions, actionItems] = await Promise.all([
     Decision.find(orgFilter).select(
-      "text owner status sourceMeetingId relatesTo createdAt embedding",
+      "text owner status sourceMeetingId relatesTo createdAt embedding organization accessCount lastAccessedAt feedbackScore feedbackCount",
     ),
     ActionItem.find(orgFilter).select(
-      "text owner status sourceMeetingId relatesTo createdAt embedding",
+      "text owner status sourceMeetingId relatesTo createdAt embedding organization accessCount lastAccessedAt feedbackScore feedbackCount",
     ),
   ]);
 
@@ -87,6 +87,12 @@ export async function buildGraph(organization) {
       sourceMeetingId: decision.sourceMeetingId?.toString() || null,
       createdAt: decision.createdAt,
       embedding: decision.embedding,
+      organization: decision.organization?.toString() || null,
+      relatesTo: decision.relatesTo || [],
+      accessCount: decision.accessCount || 0,
+      lastAccessedAt: decision.lastAccessedAt || null,
+      feedbackScore: decision.feedbackScore || 0,
+      feedbackCount: decision.feedbackCount || 0,
     });
 
     if (decision.sourceMeetingId) {
@@ -115,6 +121,12 @@ export async function buildGraph(organization) {
       sourceMeetingId: item.sourceMeetingId?.toString() || null,
       createdAt: item.createdAt,
       embedding: item.embedding,
+      organization: item.organization?.toString() || null,
+      relatesTo: item.relatesTo || [],
+      accessCount: item.accessCount || 0,
+      lastAccessedAt: item.lastAccessedAt || null,
+      feedbackScore: item.feedbackScore || 0,
+      feedbackCount: item.feedbackCount || 0,
     });
 
     if (item.sourceMeetingId) {
