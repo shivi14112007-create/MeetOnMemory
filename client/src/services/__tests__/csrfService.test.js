@@ -105,4 +105,18 @@ describe("csrfService", () => {
     );
     expect(getCsrfToken()).toBeNull();
   });
+
+  it("rotates the token on refresh", async () => {
+    axios.get
+      .mockResolvedValueOnce({ data: { csrfToken: "tok-old" } })
+      .mockResolvedValueOnce({ data: { csrfToken: "tok-new" } });
+
+    await csrfService.fetchToken();
+    expect(getCsrfToken()).toBe("tok-old");
+
+    const refreshed = await csrfService.refreshToken();
+    expect(refreshed).toBe("tok-new");
+    expect(getCsrfToken()).toBe("tok-new");
+    expect(apiClient.defaults.headers.common["X-CSRF-Token"]).toBe("tok-new");
+  });
 });
