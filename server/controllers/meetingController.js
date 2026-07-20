@@ -403,6 +403,9 @@ export const updateMeeting = async (req, res, next) => {
    ───────────────────────────────────────────────────────────── */
 export const searchMeetingsByText = async (req, res, next) => {
   try {
+    const userId = getUserId(req);
+    const orgId = req.user?.organization || null;
+
     let validated;
     try {
       validated = searchMeetingSchema.parse(req.body);
@@ -410,7 +413,11 @@ export const searchMeetingsByText = async (req, res, next) => {
       return next(zodErr);
     }
 
-    const result = await MeetingService.searchMeetings(validated);
+    const result = await MeetingService.searchMeetings(
+      validated,
+      orgId,
+      userId,
+    );
 
     return res.status(200).json({ success: true, ...result });
   } catch (err) {

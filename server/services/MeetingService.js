@@ -519,7 +519,11 @@ export const deleteMeeting = async (doc, meetingId) => {
   }
 };
 
-export const searchMeetings = async ({ query, audioUrl }) => {
+export const searchMeetings = async (
+  { query, audioUrl },
+  orgId = null,
+  userId = null,
+) => {
   let searchQuery = (query || "").trim();
 
   if (audioUrl && !searchQuery) {
@@ -533,8 +537,19 @@ export const searchMeetings = async ({ query, audioUrl }) => {
   }
 
   console.log(`🔍 Searching meetings for: "${searchQuery}"`);
+
+  const filter = {};
+  if (orgId || userId) {
+    const queryOptions = [];
+    if (orgId) queryOptions.push({ organization: orgId });
+    if (userId) queryOptions.push({ uploadedBy: userId });
+    if (queryOptions.length > 0) {
+      filter.$or = queryOptions;
+    }
+  }
+
   const results =
-    await MeetingStorageService.searchMeetingsRecords(searchQuery);
+    await MeetingStorageService.searchMeetingsRecords(searchQuery, filter);
 
   return { query: searchQuery, count: results.length, results };
 };
